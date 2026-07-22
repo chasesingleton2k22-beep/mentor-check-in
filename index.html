@@ -42,6 +42,7 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial
 #dash-filter-row { display: flex; gap: 8px; }
 .filter-chip { flex: 1; min-height: 40px; border-radius: 20px; border: 2px solid rgba(212,160,23,0.4); background: rgba(255,255,255,0.06); color: #c9d4ea; font-size: 0.88rem; font-weight: bold; cursor: pointer; }
 .filter-chip.active { background: var(--gold); border-color: var(--gold); color: var(--navy); }
+.filter-chip:active { filter: brightness(1.2); }
 #dash-empty { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 32px; text-align: center; color: #9aabcc; }
 #dash-empty.visible { display: flex; }
 #dash-empty-title { font-size: 1.1rem; font-weight: bold; color: var(--gold-light); }
@@ -64,11 +65,15 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial
 .status-badge.completed { background: rgba(67,160,71,0.3); color: #8fd992; }
 .flag-badge { font-size: 0.72rem; font-weight: bold; border-radius: 6px; padding: 2px 8px; background: rgba(255,143,0,0.25); color: #ffc067; }
 .hire-card-arrow { color: var(--gold); font-size: 1.3rem; flex-shrink: 0; }
+.hire-edit-btn { background: none; border: none; color: var(--gold-light); font-size: 1.05rem; padding: 8px; min-width: 38px; min-height: 38px; cursor: pointer; flex-shrink: 0; border-radius: 8px; }
+.hire-edit-btn:active { background: rgba(230,176,32,0.25); }
 
 #dash-fab-row { position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 14px; display: flex; gap: 10px; background: linear-gradient(0deg, rgba(9,29,68,0.98) 60%, rgba(9,29,68,0)); }
 .fab-btn { flex: 1; min-height: 54px; border-radius: 14px; border: none; font-size: 1.02rem; font-weight: bold; cursor: pointer; box-shadow: 0 3px 14px rgba(0,0,0,0.4); }
 .fab-btn.primary { background: var(--gold); color: var(--navy); }
+.fab-btn.primary:active { background: var(--gold-light); }
 .fab-btn.secondary { background: var(--navy-light); border: 2px solid var(--gold); color: var(--gold-light); }
+.fab-btn.secondary:active { background: var(--gold); color: var(--navy); }
 
 /* Bottom sheet modal (shared) */
 .sheet-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 600; display: none; align-items: flex-end; justify-content: center; }
@@ -88,10 +93,15 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial
 .plant-pick-btn { flex: 1; min-height: 54px; border-radius: 12px; border: 3px solid rgba(212,160,23,0.35); background: rgba(255,255,255,0.06); color: var(--text-light); font-weight: bold; font-size: 1rem; cursor: pointer; }
 .plant-pick-btn.sel-p1.selected { background: var(--p1); border-color: var(--p1-light); }
 .plant-pick-btn.sel-p2.selected { background: var(--p2); border-color: var(--p2-light); color: var(--navy); }
+.plant-pick-btn:active { filter: brightness(1.2); }
 .sheet-btn-row { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
 .sheet-btn { min-height: 56px; border-radius: 12px; border: none; font-size: 1.05rem; font-weight: bold; cursor: pointer; }
 .sheet-btn.primary { background: var(--gold); color: var(--navy); }
+.sheet-btn.primary:active { background: var(--gold-light); }
 .sheet-btn.cancel { background: transparent; border: 2px solid #888; color: #ccc; }
+.sheet-btn.cancel:active { border-color: var(--gold); color: var(--gold-light); }
+.sheet-btn.danger { background: transparent; border: 2px solid var(--red); color: #ff8a80; }
+.sheet-btn.danger:active { background: var(--red); color: #fff; }
 .hint-text { font-size: 0.82rem; color: #9aabcc; margin-top: -4px; }
 
 /* Placeholder screens (Waves 3-4 fill these in) */
@@ -140,18 +150,23 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial
 .export-toolbar { flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; }
 .export-select-all-btn { min-height: 40px; border-radius: 10px; border: 2px solid var(--gold); background: transparent; color: var(--gold-light); font-weight: bold; padding: 6px 14px; cursor: pointer; }
 .export-select-all-btn.active { background: var(--gold); color: var(--navy); }
+.export-select-all-btn:active { background: var(--gold); color: var(--navy); }
 .export-count { font-size: 0.85rem; color: #b9c4d8; }
 #export-list { flex: 1; min-height: 0; overflow-y: auto; padding: 6px 14px 220px; display: flex; flex-direction: column; gap: 10px; }
 .export-hire-row { display: flex; align-items: center; gap: 12px; background: linear-gradient(180deg, #1a3d78 0%, #122e5e 100%); border: 2px solid var(--gold); border-radius: 14px; padding: 12px 14px; cursor: pointer; }
+.export-hire-row:active { filter: brightness(1.12); }
 .export-checkbox { width: 24px; height: 24px; accent-color: var(--gold); flex-shrink: 0; cursor: pointer; }
 #export-footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 14px; background: linear-gradient(0deg, rgba(9,29,68,0.98) 70%, rgba(9,29,68,0)); display: flex; flex-direction: column; gap: 8px; }
 .export-btn { min-height: 52px; border-radius: 12px; border: none; font-size: 0.98rem; font-weight: bold; cursor: pointer; box-shadow: 0 3px 14px rgba(0,0,0,0.4); }
 .export-btn.primary { background: var(--gold); color: var(--navy); }
+.export-btn.primary:active { background: var(--gold-light); }
 .export-btn.secondary { background: var(--navy-light); border: 2px solid var(--gold); color: var(--gold-light); }
+.export-btn.secondary:active { background: var(--gold); color: var(--navy); }
 
 /* Toast */
 #toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #2e7d32; color: #fff; font-weight: bold; font-size: 0.95rem; padding: 10px 24px; border-radius: 24px; z-index: 2000; box-shadow: 0 4px 20px rgba(0,0,0,0.4); opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
 #toast.show { opacity: 1; }
+#toast.toast-warn { background: var(--orange); }
 </style>
 </head>
 <body>
@@ -300,6 +315,29 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial
   </div>
 </div>
 
+<!-- Edit / Delete New Hire Sheet -->
+<div class="sheet-overlay" id="edit-hire-overlay">
+  <div class="sheet-modal">
+    <div class="sheet-title">Edit New Hire</div>
+    <div class="field-group">
+      <label for="edit-hire-name">Name</label>
+      <input id="edit-hire-name" type="text" placeholder="Full name" autocomplete="off">
+    </div>
+    <div class="field-group">
+      <label>Plant</label>
+      <div class="plant-pick-row">
+        <button class="plant-pick-btn sel-p1" data-plant="P1">Plant 1</button>
+        <button class="plant-pick-btn sel-p2" data-plant="P2">Plant 2</button>
+      </div>
+    </div>
+    <div class="sheet-btn-row">
+      <button class="sheet-btn primary" id="edit-hire-save">Save Changes</button>
+      <button class="sheet-btn danger" id="edit-hire-delete">Delete New Hire</button>
+      <button class="sheet-btn cancel" id="edit-hire-cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -329,6 +367,12 @@ const Store = {
     if (hire) Object.assign(hire, patch);
     this.save();
     return hire;
+  },
+  deleteNewHire(id) {
+    const data = this.load();
+    data.newHires = data.newHires.filter(h => h.id !== id);
+    delete data.responses[id];
+    this.save();
   },
 };
 
@@ -404,15 +448,56 @@ function isFlagged(hireId) {
   return (r.q2 && r.q2.value === 'not_clear') || (r.q6 && r.q6.value === 'not_confident');
 }
 
-/* ---------- Navigation ---------- */
+/* ---------- Navigation ----------
+   Every forward transition pushes a history entry via navScreen() so the
+   phone's hardware/gesture back button steps back through the app instead
+   of exiting it. Back-buttons in the UI just call history.back(); the
+   popstate listener is the single place that re-renders whichever screen
+   the user lands on. */
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.sheet-overlay.visible').forEach(o => o.classList.remove('visible'));
 }
 
-function showToast(msg) {
+function navScreen(id, extra) {
+  showScreen(id);
+  history.pushState(Object.assign({ screen: id }, extra || {}), '', '#' + id);
+}
+
+function restoreScreen(state) {
+  const s = state || { screen: 'screen-dashboard' };
+  if (s.screen === 'screen-survey') {
+    const hire = Store.getNewHires().find(h => h.id === s.hireId);
+    if (!hire) { renderDashboard(); showScreen('screen-dashboard'); return; }
+    renderSurveyScreenContent(hire);
+    showScreen('screen-survey');
+  } else if (s.screen === 'screen-history') {
+    renderHistoryList();
+    showScreen('screen-history');
+  } else if (s.screen === 'screen-history-cohort') {
+    renderHistoryCohortList(s.cohort);
+    showScreen('screen-history-cohort');
+  } else if (s.screen === 'screen-history-detail') {
+    const hire = Store.getNewHires().find(h => h.id === s.hireId);
+    if (!hire) { renderHistoryList(); showScreen('screen-history'); return; }
+    renderHistoryDetailContent(hire);
+    showScreen('screen-history-detail');
+  } else if (s.screen === 'screen-export') {
+    renderExportScreen();
+    showScreen('screen-export');
+  } else {
+    renderDashboard();
+    showScreen('screen-dashboard');
+  }
+}
+
+window.addEventListener('popstate', e => restoreScreen(e.state));
+
+function showToast(msg, type) {
   const t = document.getElementById('toast');
   t.textContent = msg;
+  t.classList.toggle('toast-warn', type === 'warn');
   t.classList.add('show');
   clearTimeout(showToast._t);
   showToast._t = setTimeout(() => t.classList.remove('show'), 1800);
@@ -444,10 +529,11 @@ function renderDashboard() {
   }
   empty.classList.remove('visible');
 
-  list.innerHTML = hires.map(buildHireCardHtml).join('');
+  list.innerHTML = hires.map(h => buildHireCardHtml(h, { editable: true })).join('');
 }
 
-function buildHireCardHtml(h) {
+function buildHireCardHtml(h, opts) {
+  opts = opts || {};
   const statusText = { not_started: 'Not started', in_progress: 'In progress', completed: 'Completed' }[h.status] || 'Not started';
   const flagged = isFlagged(h.id);
   return `
@@ -461,6 +547,7 @@ function buildHireCardHtml(h) {
           ${flagged ? '<span class="flag-badge">⚠ Follow up</span>' : ''}
         </div>
       </div>
+      ${opts.editable ? `<button type="button" class="hire-edit-btn" data-edit-id="${h.id}" aria-label="Edit ${escapeHtml(h.name)}">✎</button>` : ''}
       <div class="hire-card-arrow">›</div>
     </div>`;
 }
@@ -484,9 +571,48 @@ document.querySelectorAll('#dash-filter-row .filter-chip').forEach(btn => {
 });
 
 document.getElementById('dash-list').addEventListener('click', e => {
+  const editBtn = e.target.closest('.hire-edit-btn');
+  if (editBtn) { openEditHire(editBtn.dataset.editId); return; }
   const card = e.target.closest('.hire-card');
   if (!card) return;
   openSurvey(card.dataset.id);
+});
+
+/* ---------- Edit / Delete New Hire ---------- */
+let editHireId = null;
+function openEditHire(hireId) {
+  const hire = Store.getNewHires().find(h => h.id === hireId);
+  if (!hire) return;
+  editHireId = hireId;
+  document.getElementById('edit-hire-name').value = hire.name;
+  document.querySelectorAll('#edit-hire-overlay .plant-pick-btn').forEach(b => b.classList.toggle('selected', b.dataset.plant === hire.plant));
+  document.getElementById('edit-hire-overlay').classList.add('visible');
+}
+document.querySelectorAll('#edit-hire-overlay .plant-pick-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#edit-hire-overlay .plant-pick-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  });
+});
+document.getElementById('edit-hire-cancel').addEventListener('click', () => document.getElementById('edit-hire-overlay').classList.remove('visible'));
+document.getElementById('edit-hire-save').addEventListener('click', () => {
+  const name = document.getElementById('edit-hire-name').value.trim();
+  const plantBtn = document.querySelector('#edit-hire-overlay .plant-pick-btn.selected');
+  if (!name) { showToast('Enter a name', 'warn'); return; }
+  if (!plantBtn) { showToast('Select a plant', 'warn'); return; }
+  Store.updateNewHire(editHireId, { name, plant: plantBtn.dataset.plant });
+  document.getElementById('edit-hire-overlay').classList.remove('visible');
+  showToast('Saved');
+  renderDashboard();
+});
+document.getElementById('edit-hire-delete').addEventListener('click', () => {
+  const hire = Store.getNewHires().find(h => h.id === editHireId);
+  if (!hire) return;
+  if (!confirm('Delete ' + hire.name + ' and their survey response? This cannot be undone.')) return;
+  Store.deleteNewHire(editHireId);
+  document.getElementById('edit-hire-overlay').classList.remove('visible');
+  showToast('Deleted');
+  renderDashboard();
 });
 
 /* ---------- Survey ---------- */
@@ -498,16 +624,20 @@ function emptyResponse() {
   return r;
 }
 
-function openSurvey(hireId) {
-  const hire = Store.getNewHires().find(h => h.id === hireId);
-  if (!hire) return;
-  currentSurveyHireId = hireId;
+function renderSurveyScreenContent(hire) {
+  currentSurveyHireId = hire.id;
   document.getElementById('survey-name-label').textContent = hire.name;
   document.getElementById('survey-plant-label').textContent = (hire.plant === 'P1' ? 'Plant 1' : 'Plant 2') + ' · ' + cohortLabel(hire.cohortKey);
   renderSurvey(hire);
-  showScreen('screen-survey');
 }
-document.getElementById('survey-go-back').addEventListener('click', () => { showScreen('screen-dashboard'); renderDashboard(); });
+
+function openSurvey(hireId) {
+  const hire = Store.getNewHires().find(h => h.id === hireId);
+  if (!hire) return;
+  renderSurveyScreenContent(hire);
+  navScreen('screen-survey', { hireId });
+}
+document.getElementById('survey-go-back').addEventListener('click', () => history.back());
 
 function renderSurvey(hire) {
   const stored = Store.getResponse(hire.id);
@@ -549,7 +679,7 @@ function renderSurvey(hire) {
             set.splice(idx, 1);
           } else {
             if (q.maxSelect && set.length >= q.maxSelect) {
-              showToast('You can select up to ' + q.maxSelect);
+              showToast('You can select up to ' + q.maxSelect, 'warn');
               return;
             }
             set.push(val);
@@ -580,6 +710,7 @@ function buildQuestionCard(q, index, response) {
   const r = response[q.id];
   const selectedSingle = q.type === 'single' ? r.value : null;
   const selectedMulti = q.type === 'multi' ? (r.values || []) : [];
+  const atMax = q.type === 'multi' && q.maxSelect && selectedMulti.length >= q.maxSelect;
   return `
     <div class="q-card" data-qid="${q.id}">
       <div class="q-number">QUESTION ${index + 1} OF ${QUESTIONS.length}</div>
@@ -588,7 +719,8 @@ function buildQuestionCard(q, index, response) {
       <div class="q-options">
         ${q.options.map(opt => {
           const selected = q.type === 'single' ? selectedSingle === opt.value : selectedMulti.includes(opt.value);
-          return `<button type="button" class="q-option ${q.type} ${selected ? 'selected' : ''}" data-value="${opt.value}">
+          const disabledLook = atMax && !selected;
+          return `<button type="button" class="q-option ${q.type} ${selected ? 'selected' : ''} ${disabledLook ? 'disabled' : ''}" data-value="${opt.value}">
             <span class="opt-mark">${selected ? '✓' : ''}</span><span>${escapeHtml(opt.label)}</span>
           </button>`;
         }).join('')}
@@ -599,9 +731,11 @@ function buildQuestionCard(q, index, response) {
 
 function refreshQuestionCard(card, q, rq) {
   const selected = q.type === 'single' ? rq.value : (rq.values || []);
+  const atMax = q.type === 'multi' && q.maxSelect && selected.length >= q.maxSelect;
   card.querySelectorAll('.q-option').forEach(btn => {
     const isSel = q.type === 'single' ? selected === btn.dataset.value : selected.includes(btn.dataset.value);
     btn.classList.toggle('selected', isSel);
+    btn.classList.toggle('disabled', !!atMax && !isSel);
     btn.querySelector('.opt-mark').textContent = isSel ? '✓' : '';
   });
 }
@@ -682,10 +816,8 @@ function buildReadonlyQuestionCard(q, index, response) {
     </div>`;
 }
 
-function openHistoryDetail(hireId) {
-  const hire = Store.getNewHires().find(h => h.id === hireId);
-  if (!hire) return;
-  const response = Store.getResponse(hireId);
+function renderHistoryDetailContent(hire) {
+  const response = Store.getResponse(hire.id);
   document.getElementById('history-detail-name').textContent = hire.name;
   document.getElementById('history-detail-plant').textContent = (hire.plant === 'P1' ? 'Plant 1' : 'Plant 2') + ' · ' + cohortLabel(hire.cohortKey);
   const metaLine = response
@@ -693,24 +825,30 @@ function openHistoryDetail(hireId) {
     : 'No response recorded yet.';
   document.getElementById('history-detail-body').innerHTML =
     `<div class="readonly-meta">${metaLine}</div>` + QUESTIONS.map((q, i) => buildReadonlyQuestionCard(q, i, response)).join('');
-  showScreen('screen-history-detail');
 }
 
-document.getElementById('btn-go-history').addEventListener('click', () => { renderHistoryList(); showScreen('screen-history'); });
-document.getElementById('history-go-back').addEventListener('click', () => showScreen('screen-dashboard'));
+function openHistoryDetail(hireId) {
+  const hire = Store.getNewHires().find(h => h.id === hireId);
+  if (!hire) return;
+  renderHistoryDetailContent(hire);
+  navScreen('screen-history-detail', { hireId });
+}
+
+document.getElementById('btn-go-history').addEventListener('click', () => { renderHistoryList(); navScreen('screen-history'); });
+document.getElementById('history-go-back').addEventListener('click', () => history.back());
 document.getElementById('history-list').addEventListener('click', e => {
   const card = e.target.closest('.cohort-card');
   if (!card) return;
   renderHistoryCohortList(card.dataset.cohort);
-  showScreen('screen-history-cohort');
+  navScreen('screen-history-cohort', { cohort: card.dataset.cohort });
 });
-document.getElementById('history-cohort-go-back').addEventListener('click', () => showScreen('screen-history'));
+document.getElementById('history-cohort-go-back').addEventListener('click', () => history.back());
 document.getElementById('history-cohort-list').addEventListener('click', e => {
   const card = e.target.closest('.hire-card');
   if (!card) return;
   openHistoryDetail(card.dataset.id);
 });
-document.getElementById('history-detail-go-back').addEventListener('click', () => showScreen('screen-history-cohort'));
+document.getElementById('history-detail-go-back').addEventListener('click', () => history.back());
 
 /* ---------- Export ---------- */
 let exportSelected = new Set();
@@ -852,29 +990,29 @@ function downloadTextFile(filename, content, mime) {
 
 document.getElementById('export-copy-summary').addEventListener('click', async () => {
   const hires = getSelectedExportHires();
-  if (hires.length === 0) { showToast('Select at least one new hire'); return; }
+  if (hires.length === 0) { showToast('Select at least one new hire', 'warn'); return; }
   try {
     await navigator.clipboard.writeText(buildFullSummaryText(hires));
     showToast('Copied to clipboard');
   } catch (e) {
-    showToast('Copy failed — try downloading instead');
+    showToast('Copy failed — try downloading instead', 'warn');
   }
 });
 
 document.getElementById('export-download-summary').addEventListener('click', () => {
   const hires = getSelectedExportHires();
-  if (hires.length === 0) { showToast('Select at least one new hire'); return; }
+  if (hires.length === 0) { showToast('Select at least one new hire', 'warn'); return; }
   downloadTextFile('mentor-checkin-' + currentCohortKey() + '.txt', buildFullSummaryText(hires), 'text/plain');
 });
 
 document.getElementById('export-download-csv').addEventListener('click', () => {
   const hires = getSelectedExportHires();
-  if (hires.length === 0) { showToast('Select at least one new hire'); return; }
+  if (hires.length === 0) { showToast('Select at least one new hire', 'warn'); return; }
   downloadTextFile('mentor-checkin-' + currentCohortKey() + '.csv', buildCsv(hires), 'text/csv');
 });
 
-document.getElementById('btn-go-export').addEventListener('click', () => { renderExportScreen(); showScreen('screen-export'); });
-document.getElementById('export-go-back').addEventListener('click', () => showScreen('screen-dashboard'));
+document.getElementById('btn-go-export').addEventListener('click', () => { renderExportScreen(); navScreen('screen-export'); });
+document.getElementById('export-go-back').addEventListener('click', () => history.back());
 
 /* ---------- Add New Hire (single) ---------- */
 let addOnePlant = null;
@@ -897,8 +1035,8 @@ document.querySelectorAll('#add-one-overlay .plant-pick-btn').forEach(btn => {
 });
 document.getElementById('add-one-save').addEventListener('click', () => {
   const name = document.getElementById('add-one-name').value.trim();
-  if (!name) { showToast('Enter a name'); return; }
-  if (!addOnePlant) { showToast('Select a plant'); return; }
+  if (!name) { showToast('Enter a name', 'warn'); return; }
+  if (!addOnePlant) { showToast('Select a plant', 'warn'); return; }
   Store.addNewHire({
     id: uid(), name, plant: addOnePlant, cohortKey: currentCohortKey(),
     dateAdded: new Date().toISOString(), status: 'not_started',
@@ -929,8 +1067,8 @@ document.querySelectorAll('#add-bulk-overlay .plant-pick-btn').forEach(btn => {
 });
 document.getElementById('add-bulk-save').addEventListener('click', () => {
   const names = document.getElementById('add-bulk-text').value.split('\n').map(s => s.trim()).filter(Boolean);
-  if (names.length === 0) { showToast('Paste at least one name'); return; }
-  if (!addBulkPlant) { showToast('Select a plant'); return; }
+  if (names.length === 0) { showToast('Paste at least one name', 'warn'); return; }
+  if (!addBulkPlant) { showToast('Select a plant', 'warn'); return; }
   const cohortKey = currentCohortKey();
   names.forEach(name => {
     Store.addNewHire({
@@ -943,11 +1081,19 @@ document.getElementById('add-bulk-save').addEventListener('click', () => {
   renderDashboard();
 });
 
+/* ---------- Tap outside a bottom sheet to dismiss it ---------- */
+document.querySelectorAll('.sheet-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.remove('visible');
+  });
+});
+
 /* ---------- Service worker ---------- */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 }
 
+history.replaceState({ screen: 'screen-dashboard' }, '', location.pathname);
 renderDashboard();
 </script>
 </body>
