@@ -26,12 +26,13 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial
 .screen.active { display: flex; }
 
 /* Topbar */
-.topbar { background: linear-gradient(180deg, #1f4285 0%, #142f6a 100%); border-bottom: 3px solid var(--gold); padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; gap: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.4); }
+.topbar { background: linear-gradient(180deg, #1f4285 0%, #142f6a 100%); border-bottom: 3px solid var(--gold); padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; gap: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.4), 0 3px 14px rgba(230,176,32,0.18); }
 .topbar-title { color: var(--gold-light); font-weight: bold; font-size: 1.15rem; line-height: 1.2; }
 .topbar-subtitle { font-size: 0.76rem; color: #b9c4d8; margin-top: 1px; }
 .topbar-right { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
 .icon-btn { background: none; border: 2px solid var(--gold); color: var(--gold-light); border-radius: 8px; padding: 6px 12px; font-size: 0.92rem; min-height: 42px; font-weight: bold; cursor: pointer; }
 .icon-btn:active { background: var(--gold); color: var(--navy); }
+.icon-btn-more { padding: 6px 10px; font-size: 1.1rem; }
 .plant-switch-pill { margin-top: 3px; border: none; border-radius: 8px; padding: 3px 9px; font-size: 0.76rem; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
 .plant-switch-pill.plant-p1 { background: var(--p1); color: #fff; }
 .plant-switch-pill.plant-p2 { background: var(--p2); color: var(--navy); }
@@ -71,6 +72,12 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial
 #dash-search { min-height: 46px; border-radius: 10px; border: 2px solid rgba(212,160,23,0.4); background: rgba(255,255,255,0.08); color: var(--text-light); padding: 8px 14px; font-size: 1rem; font-family: inherit; }
 #dash-search::placeholder { color: #7a8aaa; }
 #dash-search:focus { outline: 2px solid var(--gold); border-color: transparent; }
+#dash-stats { padding: 2px 14px 10px; display: none; flex-direction: column; gap: 6px; }
+.progress-track { height: 9px; border-radius: 6px; background: rgba(255,255,255,0.08); overflow: hidden; display: flex; }
+.progress-seg { height: 100%; transition: width 0.3s ease; }
+.progress-seg.seg-completed { background: var(--green); }
+.progress-seg.seg-inprogress { background: var(--blue); }
+.dash-stats-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem; color: #b9c4d8; gap: 8px; }
 #dash-empty { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 32px; text-align: center; color: #9aabcc; }
 #dash-empty.visible { display: flex; }
 #dash-empty-title { font-size: 1.1rem; font-weight: bold; color: var(--gold-light); }
@@ -78,9 +85,9 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial
 
 .hire-card { display: flex; align-items: center; gap: 12px; background: linear-gradient(180deg, #1a3d78 0%, #122e5e 100%); border: 2px solid var(--gold); border-radius: 14px; padding: 12px 14px; cursor: pointer; box-shadow: 0 3px 12px rgba(0,0,0,0.35); }
 .hire-card:active { filter: brightness(1.12); }
-.hire-plant-dot { width: 12px; height: 44px; border-radius: 6px; flex-shrink: 0; }
-.hire-plant-dot.plant-p1 { background: var(--p1); }
-.hire-plant-dot.plant-p2 { background: var(--p2); }
+.hire-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; font-weight: bold; flex-shrink: 0; box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 2px 6px rgba(0,0,0,0.35); }
+.hire-avatar.plant-p1 { background: linear-gradient(160deg, var(--p1-light), var(--p1)); color: #fff; }
+.hire-avatar.plant-p2 { background: linear-gradient(160deg, var(--p2-light), var(--p2)); color: var(--navy); }
 .hire-card-body { flex: 1; min-width: 0; }
 .hire-name { font-size: 1.08rem; font-weight: bold; color: var(--text-light); }
 .hire-meta-row { display: flex; align-items: center; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
@@ -122,6 +129,9 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial
 .sheet-btn.cancel:active { border-color: var(--gold); color: var(--gold-light); }
 .sheet-btn.danger { background: transparent; border: 2px solid var(--red); color: #ff8a80; }
 .sheet-btn.danger:active { background: var(--red); color: #fff; }
+.sheet-btn.outline { background: transparent; border: 2px solid #5a6a8a; color: #8a9ab8; }
+.sheet-btn.outline:active { border-color: var(--gold); color: var(--gold-light); }
+.sheet-divider { border: none; border-top: 1px solid rgba(212,160,23,0.25); margin: 4px 0; }
 .hint-text { font-size: 0.82rem; color: #9aabcc; margin-top: -4px; }
 
 /* Placeholder / empty states */
@@ -241,6 +251,17 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial
     <div class="topbar-right">
       <button class="icon-btn" id="btn-go-history">History</button>
       <button class="icon-btn" id="btn-go-export">Export</button>
+      <button class="icon-btn icon-btn-more" id="btn-more">⋯</button>
+    </div>
+  </div>
+  <div id="dash-stats">
+    <div class="progress-track" id="dash-progress-track">
+      <div class="progress-seg seg-completed" id="seg-completed" style="width:0%"></div>
+      <div class="progress-seg seg-inprogress" id="seg-inprogress" style="width:0%"></div>
+    </div>
+    <div class="dash-stats-row">
+      <span id="stat-summary">0 of 0 completed</span>
+      <span class="flag-badge" id="stat-flag-badge" style="display:none">⚠ 0 need follow-up</span>
     </div>
   </div>
   <div id="dash-toolbar">
@@ -368,6 +389,22 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial
       <button class="sheet-btn primary" id="edit-hire-save">Save Changes</button>
       <button class="sheet-btn danger" id="edit-hire-delete">Delete New Hire</button>
       <button class="sheet-btn cancel" id="edit-hire-cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- More / Housekeeping Sheet -->
+<div class="sheet-overlay" id="more-overlay">
+  <div class="sheet-modal">
+    <div class="sheet-title">More</div>
+    <div class="sheet-btn-row">
+      <button class="sheet-btn outline" id="btn-check-update">Check for Update</button>
+    </div>
+    <hr class="sheet-divider">
+    <div class="hint-text" id="more-clear-hint"></div>
+    <div class="sheet-btn-row">
+      <button class="sheet-btn danger" id="btn-clear-all">Clear All Data for This Plant</button>
+      <button class="sheet-btn cancel" id="more-cancel">Close</button>
     </div>
   </div>
 </div>
@@ -633,15 +670,50 @@ function showToast(msg, type) {
 /* ---------- Dashboard ---------- */
 let dashSearchTerm = '';
 
+function initials(name) {
+  const trimmed = (name || '').trim();
+  return trimmed ? trimmed.charAt(0).toUpperCase() : '?';
+}
+
+/* Surfaces what needs attention first: flagged, then not-yet-done, then
+   completed-and-fine last. Alphabetical within each group. */
+function hireSortComparator(a, b) {
+  const priority = h => isFlagged(h.id) ? 0 : (h.status === 'completed' ? 2 : 1);
+  const pa = priority(a), pb = priority(b);
+  if (pa !== pb) return pa - pb;
+  return a.name.localeCompare(b.name);
+}
+
+function renderDashStats(cohortHires) {
+  const stats = document.getElementById('dash-stats');
+  if (cohortHires.length === 0) { stats.style.display = 'none'; return; }
+  stats.style.display = 'flex';
+  const total = cohortHires.length;
+  const completed = cohortHires.filter(h => h.status === 'completed').length;
+  const inProgress = cohortHires.filter(h => h.status === 'in_progress').length;
+  const flagged = cohortHires.filter(h => isFlagged(h.id)).length;
+  document.getElementById('seg-completed').style.width = (completed / total * 100) + '%';
+  document.getElementById('seg-inprogress').style.width = (inProgress / total * 100) + '%';
+  document.getElementById('stat-summary').textContent = completed + ' of ' + total + ' completed';
+  const flagBadge = document.getElementById('stat-flag-badge');
+  if (flagged > 0) {
+    flagBadge.style.display = 'inline-block';
+    flagBadge.textContent = '⚠ ' + flagged + ' need follow-up';
+  } else {
+    flagBadge.style.display = 'none';
+  }
+}
+
 function renderDashboard() {
   const cohortKey = currentCohortKey();
   document.getElementById('dash-cohort-label').textContent = cohortLabel(cohortKey);
 
-  const hires = Store.getNewHires()
-    .filter(h => h.plant === currentPlant)
-    .filter(h => h.cohortKey === cohortKey)
+  const cohortHires = Store.getNewHires().filter(h => h.plant === currentPlant && h.cohortKey === cohortKey);
+  renderDashStats(cohortHires);
+
+  const hires = cohortHires
     .filter(h => !dashSearchTerm || h.name.toLowerCase().includes(dashSearchTerm))
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .sort(hireSortComparator);
 
   const list = document.getElementById('dash-list');
   const empty = document.getElementById('dash-empty');
@@ -649,7 +721,7 @@ function renderDashboard() {
   if (hires.length === 0) {
     list.innerHTML = '';
     empty.classList.add('visible');
-    const hasAnyThisCohort = Store.getNewHires().some(h => h.plant === currentPlant && h.cohortKey === cohortKey);
+    const hasAnyThisCohort = cohortHires.length > 0;
     document.getElementById('dash-empty-icon').textContent = hasAnyThisCohort ? '🔍' : '🧑‍🤝‍🧑';
     document.getElementById('dash-empty-title').textContent = hasAnyThisCohort ? 'No matches' : 'No new hires yet';
     document.getElementById('dash-empty-subtitle').textContent = hasAnyThisCohort ? 'Try a different search.' : 'Add this month\'s new hires to get started.';
@@ -666,7 +738,7 @@ function buildHireCardHtml(h, opts) {
   const flagged = isFlagged(h.id);
   return `
     <div class="hire-card" data-id="${h.id}">
-      <div class="hire-plant-dot plant-${h.plant.toLowerCase()}"></div>
+      <div class="hire-avatar plant-${h.plant.toLowerCase()}">${escapeHtml(initials(h.name))}</div>
       <div class="hire-card-body">
         <div class="hire-name">${escapeHtml(h.name)}</div>
         <div class="hire-meta-row">
@@ -902,7 +974,7 @@ function renderHistoryList() {
 function renderHistoryCohortList(cohortKey) {
   currentHistoryCohortKey = cohortKey;
   document.getElementById('history-cohort-label').textContent = cohortLabel(cohortKey);
-  const hires = Store.getNewHires().filter(h => h.plant === currentPlant && h.cohortKey === cohortKey).sort((a, b) => a.name.localeCompare(b.name));
+  const hires = Store.getNewHires().filter(h => h.plant === currentPlant && h.cohortKey === cohortKey).sort(hireSortComparator);
   document.getElementById('history-cohort-list').innerHTML = hires.map(h => buildHireCardHtml(h)).join('');
 }
 
@@ -965,7 +1037,7 @@ const STATUS_TEXT = { not_started: 'Not started', in_progress: 'In progress', co
 
 function currentCohortHires() {
   const cohortKey = currentCohortKey();
-  return Store.getNewHires().filter(h => h.plant === currentPlant && h.cohortKey === cohortKey).sort((a, b) => a.name.localeCompare(b.name));
+  return Store.getNewHires().filter(h => h.plant === currentPlant && h.cohortKey === cohortKey).sort(hireSortComparator);
 }
 
 function renderExportScreen() {
@@ -1167,6 +1239,27 @@ document.getElementById('add-bulk-save').addEventListener('click', () => {
   renderDashboard();
 });
 
+/* ---------- More sheet: Check for Update / Clear All Data ---------- */
+document.getElementById('btn-more').addEventListener('click', () => {
+  document.getElementById('more-clear-hint').textContent =
+    'Wipes every new hire and survey response for ' + plantLabel(currentPlant) + ' on this phone — current and past months. Use this after HR has the export.';
+  document.getElementById('more-overlay').classList.add('visible');
+});
+document.getElementById('more-cancel').addEventListener('click', () => document.getElementById('more-overlay').classList.remove('visible'));
+
+document.getElementById('btn-clear-all').addEventListener('click', () => {
+  const data = Store.load();
+  const toClear = data.newHires.filter(h => h.plant === currentPlant);
+  if (toClear.length === 0) { showToast('No data to clear', 'warn'); return; }
+  if (!confirm('Delete ALL new hires and survey responses for ' + plantLabel(currentPlant) + ' — every month, current and past? This cannot be undone.')) return;
+  data.newHires = data.newHires.filter(h => h.plant !== currentPlant);
+  toClear.forEach(h => delete data.responses[h.id]);
+  Store.save();
+  document.getElementById('more-overlay').classList.remove('visible');
+  showToast('Cleared all data for ' + plantLabel(currentPlant));
+  renderDashboard();
+});
+
 /* ---------- Tap outside a bottom sheet to dismiss it ---------- */
 document.querySelectorAll('.sheet-overlay').forEach(overlay => {
   overlay.addEventListener('click', e => {
@@ -1174,10 +1267,50 @@ document.querySelectorAll('.sheet-overlay').forEach(overlay => {
   });
 });
 
-/* ---------- Service worker ---------- */
+/* ---------- Service worker + Check for Update ----------
+   sw.js already listens for a SKIP_WAITING message and activates
+   immediately; this just forces a fresh check, waits for the new worker
+   to install, tells it to take over, then reloads to pick it up. */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+
+  let swReloading = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (swReloading) return;
+    swReloading = true;
+    location.reload();
+  });
 }
+
+function activateWaitingWorker(worker) {
+  worker.postMessage({ type: 'SKIP_WAITING' });
+}
+
+async function checkForUpdate() {
+  if (!('serviceWorker' in navigator)) { showToast('Not supported on this browser', 'warn'); return; }
+  const reg = await navigator.serviceWorker.getRegistration();
+  if (!reg) { showToast('Not installed as an app yet', 'warn'); return; }
+  showToast('Checking for update…');
+  try { await reg.update(); } catch (e) {}
+  if (reg.waiting) { activateWaitingWorker(reg.waiting); return; }
+  let found = false;
+  const onUpdateFound = () => {
+    found = true;
+    const newWorker = reg.installing;
+    if (!newWorker) return;
+    newWorker.addEventListener('statechange', () => {
+      if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+        activateWaitingWorker(newWorker);
+      }
+    });
+  };
+  reg.addEventListener('updatefound', onUpdateFound);
+  setTimeout(() => {
+    reg.removeEventListener('updatefound', onUpdateFound);
+    if (!found && !reg.waiting) showToast('Already up to date');
+  }, 4000);
+}
+document.getElementById('btn-check-update').addEventListener('click', checkForUpdate);
 
 bootApp();
 </script>
