@@ -51,7 +51,10 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial
 /* PIN entry / setup */
 #screen-pin-entry, #screen-pin-setup { align-items: center; justify-content: center; background: radial-gradient(ellipse at 50% 30%, #1b3f85 0%, #091d44 100%); }
 .pin-inner { display: flex; flex-direction: column; align-items: stretch; gap: 14px; padding: 24px; width: 100%; max-width: 380px; margin: 0 auto; }
-.pin-plant-label { text-align: center; font-size: 0.8rem; font-weight: bold; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); }
+.pin-brand-tag { text-align: center; font-size: 0.66rem; letter-spacing: 0.28em; color: var(--gold); font-weight: bold; opacity: 0.75; margin-bottom: -6px; }
+.pin-plant-label { text-align: center; font-size: 0.9rem; font-weight: bold; letter-spacing: 0.15em; text-transform: uppercase; border-radius: 8px; padding: 5px 0; }
+.pin-plant-label.plant-p1 { color: var(--p1-light); }
+.pin-plant-label.plant-p2 { color: var(--gold-light); }
 .pin-title { text-align: center; font-size: 1.3rem; font-weight: bold; color: var(--gold-light); margin-bottom: 4px; }
 .pin-input { min-height: 58px; font-size: 1.4rem; text-align: center; letter-spacing: 0.3em; border-radius: 12px; border: 2px solid rgba(212,160,23,0.4); background: rgba(255,255,255,0.08); color: var(--text-light); font-family: inherit; }
 .pin-input:focus { outline: 2px solid var(--gold); border-color: transparent; }
@@ -121,9 +124,10 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial
 .sheet-btn.danger:active { background: var(--red); color: #fff; }
 .hint-text { font-size: 0.82rem; color: #9aabcc; margin-top: -4px; }
 
-/* Placeholder screens (Waves 3-4 fill these in) */
+/* Placeholder / empty states */
 .placeholder-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 32px; text-align: center; color: #9aabcc; }
 .placeholder-body h2 { color: var(--gold-light); margin: 0; }
+.empty-icon { font-size: 2.6rem; opacity: 0.55; margin-bottom: 2px; }
 
 /* Survey form */
 #screen-survey { background: radial-gradient(ellipse at 50% 0%, #162f6e 0%, #091d44 100%); }
@@ -204,8 +208,9 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial
 <!-- PIN entry (plant already has a PIN set) -->
 <div class="screen" id="screen-pin-entry">
   <div class="pin-inner">
+    <div class="pin-brand-tag">TAG MANUFACTURING</div>
     <div class="pin-plant-label" id="pin-entry-plant-label">Plant</div>
-    <div class="pin-title">Enter PIN</div>
+    <div class="pin-title">🔒 Enter PIN</div>
     <input id="pin-entry-input" type="password" inputmode="numeric" autocomplete="off" class="pin-input" placeholder="••••">
     <button type="button" class="pin-btn primary" id="pin-entry-unlock">Unlock</button>
     <button type="button" class="pin-btn secondary" id="pin-entry-switch">Switch Plant</button>
@@ -215,8 +220,9 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial
 <!-- PIN setup (first time this plant is opened on this device) -->
 <div class="screen" id="screen-pin-setup">
   <div class="pin-inner">
+    <div class="pin-brand-tag">TAG MANUFACTURING</div>
     <div class="pin-plant-label" id="pin-setup-plant-label">Plant</div>
-    <div class="pin-title">Create a PIN for this plant</div>
+    <div class="pin-title">🔒 Create a PIN for this plant</div>
     <div class="hint-text">This is a light lock, not full security — it just keeps casual eyes off the survey data on this phone. Remember it; there's no in-app reset.</div>
     <input id="pin-setup-input" type="password" inputmode="numeric" autocomplete="off" class="pin-input" placeholder="New PIN">
     <input id="pin-setup-confirm" type="password" inputmode="numeric" autocomplete="off" class="pin-input" placeholder="Confirm PIN">
@@ -241,8 +247,9 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial
     <input id="dash-search" type="text" placeholder="Search by name…" autocomplete="off">
   </div>
   <div id="dash-empty">
+    <div class="empty-icon" id="dash-empty-icon">🧑‍🤝‍🧑</div>
     <div id="dash-empty-title">No new hires yet</div>
-    <div>Add this month's new hires to get started.</div>
+    <div id="dash-empty-subtitle">Add this month's new hires to get started.</div>
   </div>
   <div id="dash-list"></div>
   <div id="dash-fab-row">
@@ -552,15 +559,21 @@ function selectPlant(plant) {
   goToPinFlow(plant);
 }
 
+function setPlantLabelEl(el, plant) {
+  el.textContent = plantLabel(plant);
+  el.classList.remove('plant-p1', 'plant-p2');
+  el.classList.add('plant-' + plant.toLowerCase());
+}
+
 function goToPinFlow(plant) {
   pendingPlant = plant;
   if (Store.getPin(plant)) {
-    document.getElementById('pin-entry-plant-label').textContent = plantLabel(plant);
+    setPlantLabelEl(document.getElementById('pin-entry-plant-label'), plant);
     document.getElementById('pin-entry-input').value = '';
     showScreen('screen-pin-entry');
     document.getElementById('pin-entry-input').focus();
   } else {
-    document.getElementById('pin-setup-plant-label').textContent = plantLabel(plant);
+    setPlantLabelEl(document.getElementById('pin-setup-plant-label'), plant);
     document.getElementById('pin-setup-input').value = '';
     document.getElementById('pin-setup-confirm').value = '';
     showScreen('screen-pin-setup');
@@ -637,7 +650,9 @@ function renderDashboard() {
     list.innerHTML = '';
     empty.classList.add('visible');
     const hasAnyThisCohort = Store.getNewHires().some(h => h.plant === currentPlant && h.cohortKey === cohortKey);
+    document.getElementById('dash-empty-icon').textContent = hasAnyThisCohort ? '🔍' : '🧑‍🤝‍🧑';
     document.getElementById('dash-empty-title').textContent = hasAnyThisCohort ? 'No matches' : 'No new hires yet';
+    document.getElementById('dash-empty-subtitle').textContent = hasAnyThisCohort ? 'Try a different search.' : 'Add this month\'s new hires to get started.';
     return;
   }
   empty.classList.remove('visible');
@@ -872,7 +887,7 @@ function renderHistoryList() {
   const keys = [...new Set(hires.map(h => h.cohortKey))].sort().reverse();
   const list = document.getElementById('history-list');
   if (keys.length === 0) {
-    list.innerHTML = '<div class="placeholder-body"><h2>No past cohorts yet</h2><div>Once a new month starts, completed months will show up here.</div></div>';
+    list.innerHTML = '<div class="placeholder-body"><div class="empty-icon">🗂️</div><h2>No past cohorts yet</h2><div>Once a new month starts, completed months will show up here.</div></div>';
     return;
   }
   list.innerHTML = keys.map(k => {
@@ -965,7 +980,7 @@ function renderExportScreen() {
 function renderExportList(hires) {
   const list = document.getElementById('export-list');
   if (hires.length === 0) {
-    list.innerHTML = '<div class="placeholder-body"><h2>No new hires this month</h2><div>Add new hires from the dashboard first.</div></div>';
+    list.innerHTML = '<div class="placeholder-body"><div class="empty-icon">📋</div><h2>No new hires this month</h2><div>Add new hires from the dashboard first.</div></div>';
     return;
   }
   list.innerHTML = hires.map(h => `
