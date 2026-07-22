@@ -161,8 +161,8 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial
 .q-comment::placeholder { color: #6a7aa0; }
 .q-comment:focus { outline: 2px solid var(--gold); border-color: transparent; }
 #survey-footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 14px; background: linear-gradient(0deg, rgba(9,29,68,0.98) 65%, rgba(9,29,68,0)); display: flex; gap: 10px; }
-#survey-mark-complete { flex: 1; min-height: 56px; border-radius: 14px; border: none; font-size: 1.02rem; font-weight: bold; cursor: pointer; background: var(--gold); color: var(--navy); box-shadow: 0 3px 14px rgba(0,0,0,0.4); }
-#survey-mark-complete.done { background: var(--green); color: #fff; }
+#survey-end-btn { flex: 1; min-height: 56px; border-radius: 14px; border: none; font-size: 1.02rem; font-weight: bold; cursor: pointer; background: var(--gold); color: var(--navy); box-shadow: 0 3px 14px rgba(0,0,0,0.4); }
+#survey-end-btn:active { background: var(--gold-light); }
 
 /* History */
 #screen-history, #screen-history-cohort, #screen-history-detail { background: radial-gradient(ellipse at 50% 0%, #162f6e 0%, #091d44 100%); }
@@ -290,7 +290,7 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial
   </div>
   <div id="survey-body"></div>
   <div id="survey-footer">
-    <button id="survey-mark-complete">Mark as Completed</button>
+    <button id="survey-end-btn">End Survey</button>
   </div>
 </div>
 
@@ -470,7 +470,7 @@ function cohortLabel(cohortKey) {
 
 /* ---------- Survey question model (shared by Waves 2 & 4) ---------- */
 const QUESTIONS = [
-  { id: 'q1', text: "What surprised you most during your first 30 days?", type: 'single',
+  { id: 'q1', text: "What surprised you most during your first 30 days?", type: 'multi',
     options: [
       { value: 'clearer', label: "The job was clearer and more organized than expected" },
       { value: 'welcoming', label: "The culture and people were more welcoming than expected" },
@@ -479,7 +479,7 @@ const QUESTIONS = [
       { value: 'different', label: "Some things were different than how they were described" },
       { value: 'nothing', label: "Nothing really surprised me" },
     ] },
-  { id: 'q2', text: "How clear are you on what success looks like in your role right now?", type: 'single',
+  { id: 'q2', text: "How clear are you on what success looks like in your role right now?", type: 'multi',
     options: [
       { value: 'very_clear', label: "Very clear – I know what's expected and how I'm doing" },
       { value: 'mostly_clear', label: "Mostly clear – a few things still need clarification" },
@@ -495,7 +495,7 @@ const QUESTIONS = [
       { value: 'competing_priorities', label: "Competing priorities" },
       { value: 'nothing', label: "Nothing significantly slowed me down" },
     ] },
-  { id: 'q4', text: "What has helped you feel the most supported so far?", type: 'multi', maxSelect: 2,
+  { id: 'q4', text: "What has helped you feel the most supported so far?", type: 'multi',
     options: [
       { value: 'supervisor', label: "My direct supervisor" },
       { value: 'mentor', label: "My mentor / trainer" },
@@ -504,7 +504,7 @@ const QUESTIONS = [
       { value: 'culture', label: "Company culture and communication" },
       { value: 'still_building', label: "I'm still building those connections" },
     ] },
-  { id: 'q5', text: "If you could improve one part of the onboarding experience, what would it be?", type: 'single',
+  { id: 'q5', text: "If you could improve one part of the onboarding experience, what would it be?", type: 'multi',
     options: [
       { value: 'pre_hire', label: "Pre-hire communication" },
       { value: 'first_week', label: "First day / first week experience" },
@@ -513,7 +513,7 @@ const QUESTIONS = [
       { value: 'scheduling', label: "Scheduling or pacing" },
       { value: 'no_changes', label: "No changes needed at this time" },
     ] },
-  { id: 'q6', text: "At this point, how confident do you feel about being successful here long-term?", type: 'single',
+  { id: 'q6', text: "At this point, how confident do you feel about being successful here long-term?", type: 'multi',
     options: [
       { value: 'very_confident', label: "Very confident" },
       { value: 'confident', label: "Confident" },
@@ -525,7 +525,9 @@ const QUESTIONS = [
 function isFlagged(hireId) {
   const r = Store.getResponse(hireId);
   if (!r) return false;
-  return (r.q2 && r.q2.value === 'not_clear') || (r.q6 && r.q6.value === 'not_confident');
+  const q2Flagged = r.q2 && r.q2.values && r.q2.values.includes('not_clear');
+  const q6Flagged = r.q6 && r.q6.values && r.q6.values.includes('not_confident');
+  return !!(q2Flagged || q6Flagged);
 }
 
 /* ---------- Navigation ----------
@@ -883,8 +885,6 @@ function renderSurvey(hire) {
       });
     }
   });
-
-  updateMarkCompleteButton(hire.id);
 }
 
 function buildQuestionCard(q, index, response) {
@@ -926,28 +926,16 @@ function bumpStatusIfNeeded(hireId) {
   if (hire && hire.status === 'not_started') Store.updateNewHire(hireId, { status: 'in_progress' });
 }
 
-function updateMarkCompleteButton(hireId) {
-  const hire = Store.getNewHires().find(h => h.id === hireId);
-  const btn = document.getElementById('survey-mark-complete');
-  const done = hire && hire.status === 'completed';
-  btn.textContent = done ? '✓ Completed — Tap to Reopen' : 'Mark as Completed';
-  btn.classList.toggle('done', done);
-}
-
-document.getElementById('survey-mark-complete').addEventListener('click', () => {
+document.getElementById('survey-end-btn').addEventListener('click', () => {
   if (!currentSurveyHireId) return;
   const hire = Store.getNewHires().find(h => h.id === currentSurveyHireId);
   if (!hire) return;
-  if (hire.status === 'completed') {
-    Store.updateNewHire(hire.id, { status: 'in_progress' });
-  } else {
-    const r = Store.getResponse(hire.id) || emptyResponse();
-    r.dateCompleted = new Date().toISOString();
-    Store.setResponse(hire.id, r);
-    Store.updateNewHire(hire.id, { status: 'completed' });
-    showToast('Marked complete');
-  }
-  updateMarkCompleteButton(hire.id);
+  const r = Store.getResponse(hire.id) || emptyResponse();
+  r.dateCompleted = new Date().toISOString();
+  Store.setResponse(hire.id, r);
+  Store.updateNewHire(hire.id, { status: 'completed' });
+  showToast('Survey completed');
+  history.back();
 });
 
 /* ---------- History ---------- */
@@ -1097,16 +1085,15 @@ function getSelectedExportHires() {
   return currentCohortHires().filter(h => exportSelected.has(h.id));
 }
 
-function formatAnswer(q, r) {
-  if (!r) return null;
-  if (q.type === 'single') {
-    if (!r.value) return null;
-    const opt = q.options.find(o => o.value === r.value);
-    return opt ? opt.label : r.value;
-  }
-  const vals = r.values || [];
-  if (vals.length === 0) return null;
-  return vals.map(v => { const o = q.options.find(o => o.value === v); return o ? o.label : v; }).join('; ');
+function selectedAnswerLabels(q, r) {
+  if (!r) return [];
+  const vals = q.type === 'single' ? (r.value ? [r.value] : []) : (r.values || []);
+  return vals.map(v => { const o = q.options.find(o => o.value === v); return o ? o.label : v; });
+}
+
+function formatAnswerForCsv(q, r) {
+  const labels = selectedAnswerLabels(q, r);
+  return labels.join('; ');
 }
 
 function buildEmployeeSummary(h) {
@@ -1121,7 +1108,15 @@ function buildEmployeeSummary(h) {
   QUESTIONS.forEach((q, i) => {
     lines.push('Q' + (i + 1) + '. ' + q.text);
     const r = response ? response[q.id] : null;
-    lines.push('A: ' + (formatAnswer(q, r) || '(no answer)'));
+    const labels = selectedAnswerLabels(q, r);
+    if (labels.length === 0) {
+      lines.push('A: (no answer)');
+    } else if (labels.length === 1) {
+      lines.push('A: ' + labels[0]);
+    } else {
+      lines.push('A:');
+      labels.forEach(l => lines.push('   - ' + l));
+    }
     if (r && r.comment) lines.push('Comment: ' + r.comment);
     lines.push('');
   });
@@ -1151,7 +1146,7 @@ function buildCsv(hires) {
     ];
     QUESTIONS.forEach(q => {
       const r = response ? response[q.id] : null;
-      row.push(formatAnswer(q, r) || '');
+      row.push(formatAnswerForCsv(q, r));
       row.push(r ? (r.comment || '') : '');
     });
     rows.push(row);
@@ -1188,7 +1183,10 @@ document.getElementById('export-download-summary').addEventListener('click', () 
 document.getElementById('export-download-csv').addEventListener('click', () => {
   const hires = getSelectedExportHires();
   if (hires.length === 0) { showToast('Select at least one new hire', 'warn'); return; }
-  downloadTextFile('mentor-checkin-' + currentCohortKey() + '.csv', buildCsv(hires), 'text/csv');
+  // Leading BOM so Excel reads the UTF-8 special characters (en-dashes, etc.)
+  // correctly instead of showing mangled characters.
+  const BOM = String.fromCharCode(0xFEFF);
+  downloadTextFile('mentor-checkin-' + currentCohortKey() + '.csv', BOM + buildCsv(hires), 'text/csv;charset=utf-8');
 });
 
 document.getElementById('btn-go-export').addEventListener('click', () => { renderExportScreen(); navScreen('screen-export'); });

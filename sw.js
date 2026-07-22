@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mentor-checkin-v3';
+const CACHE_NAME = 'mentor-checkin-v4';
 
 const CORE_ASSETS = ['./', './index.html', './icon.svg', './manifest.json'];
 
