@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Mentor Check-In</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0d2b5c">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mentor">
+<style>
+:root {
+  --navy: #0d2b5c; --navy-light: #1a3d78;
+  --gold: #e6b020; --gold-light: #ffd54f;
+  --p1: #2f6fdb; --p1-light: #6ea8ff;
+  --p2: #e6b020; --p2-light: #ffd54f;
+  --green: #43a047; --blue: #1e88e5; --gray: #5a6a8a; --red: #e53935; --orange: #ff8f00;
+  --text-light: #ffffff;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+input, select, textarea { -webkit-user-select: text; user-select: text; }
+html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial, sans-serif; background: #091d44; color: var(--text-light); overscroll-behavior: none; }
+#app { height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+.screen { flex: 1; display: none; flex-direction: column; overflow: hidden; }
+.screen.active { display: flex; }
+
+/* Topbar */
+.topbar { background: linear-gradient(180deg, #1f4285 0%, #142f6a 100%); border-bottom: 3px solid var(--gold); padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; gap: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.4); }
+.topbar-title { color: var(--gold-light); font-weight: bold; font-size: 1.15rem; line-height: 1.2; }
+.topbar-subtitle { font-size: 0.76rem; color: #b9c4d8; margin-top: 1px; }
+.topbar-right { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+.icon-btn { background: none; border: 2px solid var(--gold); color: var(--gold-light); border-radius: 8px; padding: 6px 12px; font-size: 0.92rem; min-height: 42px; font-weight: bold; cursor: pointer; }
+.icon-btn:active { background: var(--gold); color: var(--navy); }
+
+/* Dashboard */
+#screen-dashboard { background: radial-gradient(ellipse at 50% 0%, #162f6e 0%, #091d44 100%); }
+#dash-toolbar { flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; padding: 10px 14px; }
+#dash-search { min-height: 46px; border-radius: 10px; border: 2px solid rgba(212,160,23,0.4); background: rgba(255,255,255,0.08); color: var(--text-light); padding: 8px 14px; font-size: 1rem; font-family: inherit; }
+#dash-search::placeholder { color: #7a8aaa; }
+#dash-search:focus { outline: 2px solid var(--gold); border-color: transparent; }
+#dash-filter-row { display: flex; gap: 8px; }
+.filter-chip { flex: 1; min-height: 40px; border-radius: 20px; border: 2px solid rgba(212,160,23,0.4); background: rgba(255,255,255,0.06); color: #c9d4ea; font-size: 0.88rem; font-weight: bold; cursor: pointer; }
+.filter-chip.active { background: var(--gold); border-color: var(--gold); color: var(--navy); }
+#dash-empty { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 32px; text-align: center; color: #9aabcc; }
+#dash-empty.visible { display: flex; }
+#dash-empty-title { font-size: 1.1rem; font-weight: bold; color: var(--gold-light); }
+#dash-list { flex: 1; min-height: 0; overflow-y: auto; padding: 6px 14px 100px; display: flex; flex-direction: column; gap: 10px; }
+
+.hire-card { display: flex; align-items: center; gap: 12px; background: linear-gradient(180deg, #1a3d78 0%, #122e5e 100%); border: 2px solid var(--gold); border-radius: 14px; padding: 12px 14px; cursor: pointer; box-shadow: 0 3px 12px rgba(0,0,0,0.35); }
+.hire-card:active { filter: brightness(1.12); }
+.hire-plant-dot { width: 12px; height: 44px; border-radius: 6px; flex-shrink: 0; }
+.hire-plant-dot.plant-p1 { background: var(--p1); }
+.hire-plant-dot.plant-p2 { background: var(--p2); }
+.hire-card-body { flex: 1; min-width: 0; }
+.hire-name { font-size: 1.08rem; font-weight: bold; color: var(--text-light); }
+.hire-meta-row { display: flex; align-items: center; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
+.plant-badge { font-size: 0.72rem; font-weight: bold; border-radius: 6px; padding: 2px 8px; text-transform: uppercase; letter-spacing: 0.03em; }
+.plant-badge.plant-p1 { background: var(--p1); color: #fff; }
+.plant-badge.plant-p2 { background: var(--p2); color: var(--navy); }
+.status-badge { font-size: 0.72rem; font-weight: bold; border-radius: 6px; padding: 2px 8px; }
+.status-badge.not_started { background: rgba(90,106,138,0.4); color: #c9d4ea; }
+.status-badge.in_progress { background: rgba(30,136,229,0.3); color: #8ec3f5; }
+.status-badge.completed { background: rgba(67,160,71,0.3); color: #8fd992; }
+.flag-badge { font-size: 0.72rem; font-weight: bold; border-radius: 6px; padding: 2px 8px; background: rgba(255,143,0,0.25); color: #ffc067; }
+.hire-card-arrow { color: var(--gold); font-size: 1.3rem; flex-shrink: 0; }
+
+#dash-fab-row { position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 14px; display: flex; gap: 10px; background: linear-gradient(0deg, rgba(9,29,68,0.98) 60%, rgba(9,29,68,0)); }
+.fab-btn { flex: 1; min-height: 54px; border-radius: 14px; border: none; font-size: 1.02rem; font-weight: bold; cursor: pointer; box-shadow: 0 3px 14px rgba(0,0,0,0.4); }
+.fab-btn.primary { background: var(--gold); color: var(--navy); }
+.fab-btn.secondary { background: var(--navy-light); border: 2px solid var(--gold); color: var(--gold-light); }
+
+/* Bottom sheet modal (shared) */
+.sheet-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 600; display: none; align-items: flex-end; justify-content: center; }
+.sheet-overlay.visible { display: flex; }
+.sheet-modal { background: var(--navy-light); border: 3px solid var(--gold); border-radius: 16px 16px 0 0; width: 100%; max-width: 600px; max-height: 92vh; overflow-y: auto; padding: 20px 16px; display: flex; flex-direction: column; gap: 12px; }
+.sheet-title { font-size: 0.78rem; font-weight: bold; color: var(--gold); letter-spacing: 0.08em; text-transform: uppercase; }
+.sheet-tabs { display: flex; background: rgba(0,0,0,0.25); border-radius: 10px; overflow: hidden; }
+.sheet-tab { flex: 1; min-height: 42px; background: transparent; border: none; color: #8a9ab8; font-size: 0.92rem; font-weight: bold; cursor: pointer; }
+.sheet-tab.active { background: var(--gold); color: var(--navy); }
+.field-group { display: flex; flex-direction: column; gap: 5px; }
+.field-group label { font-size: 0.78rem; font-weight: bold; color: var(--gold-light); text-transform: uppercase; letter-spacing: 0.03em; }
+.field-group input, .field-group textarea { min-height: 52px; font-size: 1.05rem; border-radius: 10px; border: 2px solid rgba(212,160,23,0.4); background: rgba(255,255,255,0.1); color: var(--text-light); padding: 10px 12px; font-family: inherit; }
+.field-group textarea { min-height: 110px; resize: vertical; }
+.field-group input:focus, .field-group textarea:focus { outline: 2px solid var(--gold); border-color: transparent; }
+.field-group input::placeholder, .field-group textarea::placeholder { color: #6a7aa0; }
+.plant-pick-row { display: flex; gap: 10px; }
+.plant-pick-btn { flex: 1; min-height: 54px; border-radius: 12px; border: 3px solid rgba(212,160,23,0.35); background: rgba(255,255,255,0.06); color: var(--text-light); font-weight: bold; font-size: 1rem; cursor: pointer; }
+.plant-pick-btn.sel-p1.selected { background: var(--p1); border-color: var(--p1-light); }
+.plant-pick-btn.sel-p2.selected { background: var(--p2); border-color: var(--p2-light); color: var(--navy); }
+.sheet-btn-row { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+.sheet-btn { min-height: 56px; border-radius: 12px; border: none; font-size: 1.05rem; font-weight: bold; cursor: pointer; }
+.sheet-btn.primary { background: var(--gold); color: var(--navy); }
+.sheet-btn.cancel { background: transparent; border: 2px solid #888; color: #ccc; }
+.hint-text { font-size: 0.82rem; color: #9aabcc; margin-top: -4px; }
+
+/* Placeholder screens (Waves 3-4 fill these in) */
+.placeholder-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 32px; text-align: center; color: #9aabcc; }
+.placeholder-body h2 { color: var(--gold-light); margin: 0; }
+
+/* Survey form */
+#screen-survey { background: radial-gradient(ellipse at 50% 0%, #162f6e 0%, #091d44 100%); }
+#survey-body { flex: 1; min-height: 0; overflow-y: auto; padding: 14px 14px 110px; display: flex; flex-direction: column; gap: 14px; }
+.mentor-name-card { background: rgba(255,255,255,0.06); border: 2px solid rgba(212,160,23,0.35); border-radius: 12px; padding: 10px 14px; display: flex; flex-direction: column; gap: 6px; }
+.mentor-name-card label { font-size: 0.74rem; font-weight: bold; color: var(--gold-light); text-transform: uppercase; letter-spacing: 0.05em; }
+.mentor-name-card input { min-height: 44px; border-radius: 8px; border: 2px solid rgba(212,160,23,0.35); background: rgba(255,255,255,0.08); color: var(--text-light); padding: 6px 10px; font-size: 0.98rem; font-family: inherit; }
+.mentor-name-card input:focus { outline: 2px solid var(--gold); border-color: transparent; }
+.q-card { background: linear-gradient(180deg, #1a3d78 0%, #122e5e 100%); border: 2px solid rgba(212,160,23,0.4); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.q-number { font-size: 0.72rem; font-weight: bold; color: var(--gold); letter-spacing: 0.08em; }
+.q-text { font-size: 1.02rem; font-weight: bold; color: var(--text-light); line-height: 1.35; }
+.q-hint { font-size: 0.78rem; color: #9aabcc; margin-top: -4px; }
+.q-options { display: flex; flex-direction: column; gap: 8px; }
+.q-option { min-height: 52px; border-radius: 12px; border: 2px solid rgba(212,160,23,0.35); background: rgba(255,255,255,0.06); color: var(--text-light); font-size: 0.95rem; text-align: left; padding: 10px 14px; cursor: pointer; display: flex; align-items: center; gap: 10px; line-height: 1.3; }
+.q-option .opt-mark { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--gold); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: bold; }
+.q-option.multi .opt-mark { border-radius: 5px; }
+.q-option.selected { background: var(--gold); color: var(--navy); border-color: var(--gold); }
+.q-option.selected .opt-mark { background: var(--navy); border-color: var(--navy); color: var(--gold); }
+.q-option.disabled { opacity: 0.4; cursor: default; }
+.q-comment { min-height: 44px; border-radius: 10px; border: 2px solid rgba(212,160,23,0.3); background: rgba(255,255,255,0.07); color: var(--text-light); padding: 8px 12px; font-size: 0.9rem; font-family: inherit; resize: vertical; }
+.q-comment::placeholder { color: #6a7aa0; }
+.q-comment:focus { outline: 2px solid var(--gold); border-color: transparent; }
+#survey-footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 14px; background: linear-gradient(0deg, rgba(9,29,68,0.98) 65%, rgba(9,29,68,0)); display: flex; gap: 10px; }
+#survey-mark-complete { flex: 1; min-height: 56px; border-radius: 14px; border: none; font-size: 1.02rem; font-weight: bold; cursor: pointer; background: var(--gold); color: var(--navy); box-shadow: 0 3px 14px rgba(0,0,0,0.4); }
+#survey-mark-complete.done { background: var(--green); color: #fff; }
+
+/* History */
+#screen-history, #screen-history-cohort, #screen-history-detail { background: radial-gradient(ellipse at 50% 0%, #162f6e 0%, #091d44 100%); }
+#history-list, #history-cohort-list, #history-detail-body { flex: 1; min-height: 0; overflow-y: auto; padding: 10px 14px 24px; display: flex; flex-direction: column; gap: 10px; }
+.cohort-card { display: flex; align-items: center; justify-content: space-between; background: linear-gradient(180deg, #1a3d78 0%, #122e5e 100%); border: 2px solid var(--gold); border-radius: 14px; padding: 14px 16px; cursor: pointer; box-shadow: 0 3px 12px rgba(0,0,0,0.35); }
+.cohort-card:active { filter: brightness(1.12); }
+.cohort-card-label { font-size: 1.05rem; font-weight: bold; color: var(--text-light); }
+.cohort-card-count { font-size: 0.82rem; color: #b9c4d8; margin-top: 2px; }
+.cohort-card-arrow { color: var(--gold); font-size: 1.3rem; }
+.readonly-meta { font-size: 0.86rem; color: #b9c4d8; padding: 2px 4px 4px; }
+.q-option.readonly { cursor: default; }
+.q-comment-readonly { font-size: 0.9rem; color: #d6def0; font-style: italic; background: rgba(255,255,255,0.05); border-radius: 8px; padding: 8px 12px; }
+
+/* Export */
+#screen-export { background: radial-gradient(ellipse at 50% 0%, #162f6e 0%, #091d44 100%); }
+.export-toolbar { flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; }
+.export-select-all-btn { min-height: 40px; border-radius: 10px; border: 2px solid var(--gold); background: transparent; color: var(--gold-light); font-weight: bold; padding: 6px 14px; cursor: pointer; }
+.export-select-all-btn.active { background: var(--gold); color: var(--navy); }
+.export-count { font-size: 0.85rem; color: #b9c4d8; }
+#export-list { flex: 1; min-height: 0; overflow-y: auto; padding: 6px 14px 220px; display: flex; flex-direction: column; gap: 10px; }
+.export-hire-row { display: flex; align-items: center; gap: 12px; background: linear-gradient(180deg, #1a3d78 0%, #122e5e 100%); border: 2px solid var(--gold); border-radius: 14px; padding: 12px 14px; cursor: pointer; }
+.export-checkbox { width: 24px; height: 24px; accent-color: var(--gold); flex-shrink: 0; cursor: pointer; }
+#export-footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 14px; background: linear-gradient(0deg, rgba(9,29,68,0.98) 70%, rgba(9,29,68,0)); display: flex; flex-direction: column; gap: 8px; }
+.export-btn { min-height: 52px; border-radius: 12px; border: none; font-size: 0.98rem; font-weight: bold; cursor: pointer; box-shadow: 0 3px 14px rgba(0,0,0,0.4); }
+.export-btn.primary { background: var(--gold); color: var(--navy); }
+.export-btn.secondary { background: var(--navy-light); border: 2px solid var(--gold); color: var(--gold-light); }
+
+/* Toast */
+#toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #2e7d32; color: #fff; font-weight: bold; font-size: 0.95rem; padding: 10px 24px; border-radius: 24px; z-index: 2000; box-shadow: 0 4px 20px rgba(0,0,0,0.4); opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
+#toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- Dashboard -->
+<div class="screen active" id="screen-dashboard">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="dash-cohort-label">Cohort</div>
+      <div class="topbar-subtitle">Mentor Check-In · TAG Mfg</div>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" id="btn-go-history">History</button>
+      <button class="icon-btn" id="btn-go-export">Export</button>
+    </div>
+  </div>
+  <div id="dash-toolbar">
+    <input id="dash-search" type="text" placeholder="Search by name…" autocomplete="off">
+    <div id="dash-filter-row">
+      <button class="filter-chip active" data-plant="all">All</button>
+      <button class="filter-chip" data-plant="P1">Plant 1</button>
+      <button class="filter-chip" data-plant="P2">Plant 2</button>
+    </div>
+  </div>
+  <div id="dash-empty">
+    <div id="dash-empty-title">No new hires yet</div>
+    <div>Add this month's new hires to get started.</div>
+  </div>
+  <div id="dash-list"></div>
+  <div id="dash-fab-row">
+    <button class="fab-btn secondary" id="btn-add-bulk">+ Paste List</button>
+    <button class="fab-btn primary" id="btn-add-one">+ Add New Hire</button>
+  </div>
+</div>
+
+<!-- Survey -->
+<div class="screen" id="screen-survey">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="survey-name-label">Survey</div>
+      <div class="topbar-subtitle" id="survey-plant-label"></div>
+    </div>
+    <button class="icon-btn" id="survey-go-back">← Back</button>
+  </div>
+  <div id="survey-body"></div>
+  <div id="survey-footer">
+    <button id="survey-mark-complete">Mark as Completed</button>
+  </div>
+</div>
+
+<!-- History: cohort list -->
+<div class="screen" id="screen-history">
+  <div class="topbar">
+    <span class="topbar-title">History</span>
+    <button class="icon-btn" id="history-go-back">← Back</button>
+  </div>
+  <div id="history-list"></div>
+</div>
+
+<!-- History: hires within a cohort -->
+<div class="screen" id="screen-history-cohort">
+  <div class="topbar">
+    <span class="topbar-title" id="history-cohort-label">Cohort</span>
+    <button class="icon-btn" id="history-cohort-go-back">← Back</button>
+  </div>
+  <div id="history-cohort-list"></div>
+</div>
+
+<!-- History: read-only survey detail -->
+<div class="screen" id="screen-history-detail">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="history-detail-name">Name</div>
+      <div class="topbar-subtitle" id="history-detail-plant"></div>
+    </div>
+    <button class="icon-btn" id="history-detail-go-back">← Back</button>
+  </div>
+  <div id="history-detail-body"></div>
+</div>
+
+<!-- Export -->
+<div class="screen" id="screen-export">
+  <div class="topbar">
+    <span class="topbar-title" id="export-cohort-label">Export</span>
+    <button class="icon-btn" id="export-go-back">← Back</button>
+  </div>
+  <div class="export-toolbar">
+    <button class="export-select-all-btn" id="export-select-all">Select All</button>
+    <span class="export-count" id="export-count-label">0 selected</span>
+  </div>
+  <div id="export-list"></div>
+  <div id="export-footer">
+    <button class="export-btn primary" id="export-copy-summary">Copy Summary to Clipboard</button>
+    <button class="export-btn secondary" id="export-download-summary">Download Summary (.txt)</button>
+    <button class="export-btn secondary" id="export-download-csv">Download CSV</button>
+  </div>
+</div>
+
+</div>
+
+<!-- Add Single New Hire Sheet -->
+<div class="sheet-overlay" id="add-one-overlay">
+  <div class="sheet-modal">
+    <div class="sheet-title">Add New Hire</div>
+    <div class="field-group">
+      <label for="add-one-name">Name</label>
+      <input id="add-one-name" type="text" placeholder="Full name" autocomplete="off">
+    </div>
+    <div class="field-group">
+      <label>Plant</label>
+      <div class="plant-pick-row">
+        <button class="plant-pick-btn sel-p1" data-plant="P1">Plant 1</button>
+        <button class="plant-pick-btn sel-p2" data-plant="P2">Plant 2</button>
+      </div>
+    </div>
+    <div class="hint-text" id="add-one-cohort-hint"></div>
+    <div class="sheet-btn-row">
+      <button class="sheet-btn primary" id="add-one-save">Add New Hire</button>
+      <button class="sheet-btn cancel" id="add-one-cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Bulk Add Sheet -->
+<div class="sheet-overlay" id="add-bulk-overlay">
+  <div class="sheet-modal">
+    <div class="sheet-title">Paste List of Names</div>
+    <div class="hint-text">One name per line. All names will be added to the plant selected below.</div>
+    <div class="field-group">
+      <label for="add-bulk-text">Names</label>
+      <textarea id="add-bulk-text" placeholder="Jane Smith&#10;John Doe&#10;..."></textarea>
+    </div>
+    <div class="field-group">
+      <label>Plant</label>
+      <div class="plant-pick-row">
+        <button class="plant-pick-btn sel-p1" data-plant="P1">Plant 1</button>
+        <button class="plant-pick-btn sel-p2" data-plant="P2">Plant 2</button>
+      </div>
+    </div>
+    <div class="hint-text" id="add-bulk-cohort-hint"></div>
+    <div class="sheet-btn-row">
+      <button class="sheet-btn primary" id="add-bulk-save">Add All</button>
+      <button class="sheet-btn cancel" id="add-bulk-cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ---------- Storage layer ----------
+   Everything reads/writes through Store so a future cloud-sync layer can
+   replace the persistence calls here without touching screen code. */
+const STORAGE_KEY = 'mentorCheckIn_v1';
+
+const Store = {
+  _data: null,
+  load() {
+    if (this._data) return this._data;
+    let parsed = null;
+    try { parsed = JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch (e) {}
+    this._data = parsed && typeof parsed === 'object'
+      ? Object.assign({ newHires: [], responses: {}, mentorName: '' }, parsed)
+      : { newHires: [], responses: {}, mentorName: '' };
+    return this._data;
+  },
+  save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(this._data)); },
+  getNewHires() { return this.load().newHires; },
+  getResponse(hireId) { return this.load().responses[hireId] || null; },
+  setResponse(hireId, response) { this.load().responses[hireId] = response; this.save(); },
+  addNewHire(hire) { this.load().newHires.push(hire); this.save(); },
+  updateNewHire(id, patch) {
+    const hire = this.load().newHires.find(h => h.id === id);
+    if (hire) Object.assign(hire, patch);
+    this.save();
+    return hire;
+  },
+};
+
+function uid() { return 'h_' + Math.random().toString(36).slice(2, 10) + Math.random().toString(36).slice(2, 6); }
+
+const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+function currentCohortKey() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+}
+function cohortLabel(cohortKey) {
+  const [y, m] = cohortKey.split('-').map(Number);
+  return MONTH_NAMES[m - 1] + ' ' + y;
+}
+
+/* ---------- Survey question model (shared by Waves 2 & 4) ---------- */
+const QUESTIONS = [
+  { id: 'q1', text: "What surprised you most during your first 30 days?", type: 'single',
+    options: [
+      { value: 'clearer', label: "The job was clearer and more organized than expected" },
+      { value: 'welcoming', label: "The culture and people were more welcoming than expected" },
+      { value: 'complex', label: "The role was more complex than I expected" },
+      { value: 'fast_pace', label: "The pace was faster than I expected" },
+      { value: 'different', label: "Some things were different than how they were described" },
+      { value: 'nothing', label: "Nothing really surprised me" },
+    ] },
+  { id: 'q2', text: "How clear are you on what success looks like in your role right now?", type: 'single',
+    options: [
+      { value: 'very_clear', label: "Very clear – I know what's expected and how I'm doing" },
+      { value: 'mostly_clear', label: "Mostly clear – a few things still need clarification" },
+      { value: 'somewhat_unclear', label: "Somewhat unclear – I'm still figuring it out" },
+      { value: 'not_clear', label: "Not clear – I need more direction or feedback" },
+    ] },
+  { id: 'q3', text: "What, if anything, slowed you down in your first 30 days?", type: 'multi',
+    options: [
+      { value: 'access', label: "Access to tools, systems, or equipment" },
+      { value: 'training_timing', label: "Training timing or sequence" },
+      { value: 'who_to_ask', label: "Not knowing who to ask for help" },
+      { value: 'processes', label: "Processes or paperwork" },
+      { value: 'competing_priorities', label: "Competing priorities" },
+      { value: 'nothing', label: "Nothing significantly slowed me down" },
+    ] },
+  { id: 'q4', text: "What has helped you feel the most supported so far?", type: 'multi', maxSelect: 2,
+    options: [
+      { value: 'supervisor', label: "My direct supervisor" },
+      { value: 'mentor', label: "My mentor / trainer" },
+      { value: 'coworkers', label: "Coworkers or team members" },
+      { value: 'materials', label: "Training materials or documentation" },
+      { value: 'culture', label: "Company culture and communication" },
+      { value: 'still_building', label: "I'm still building those connections" },
+    ] },
+  { id: 'q5', text: "If you could improve one part of the onboarding experience, what would it be?", type: 'single',
+    options: [
+      { value: 'pre_hire', label: "Pre-hire communication" },
+      { value: 'first_week', label: "First day / first week experience" },
+      { value: 'training_content', label: "Training content or format" },
+      { value: 'tech_setup', label: "Technology or system setup" },
+      { value: 'scheduling', label: "Scheduling or pacing" },
+      { value: 'no_changes', label: "No changes needed at this time" },
+    ] },
+  { id: 'q6', text: "At this point, how confident do you feel about being successful here long-term?", type: 'single',
+    options: [
+      { value: 'very_confident', label: "Very confident" },
+      { value: 'confident', label: "Confident" },
+      { value: 'somewhat_unsure', label: "Somewhat unsure" },
+      { value: 'not_confident', label: "Not confident yet" },
+    ] },
+];
+
+function isFlagged(hireId) {
+  const r = Store.getResponse(hireId);
+  if (!r) return false;
+  return (r.q2 && r.q2.value === 'not_clear') || (r.q6 && r.q6.value === 'not_confident');
+}
+
+/* ---------- Navigation ---------- */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+/* ---------- Dashboard ---------- */
+let dashFilterPlant = 'all';
+let dashSearchTerm = '';
+
+function renderDashboard() {
+  const cohortKey = currentCohortKey();
+  document.getElementById('dash-cohort-label').textContent = cohortLabel(cohortKey);
+
+  const hires = Store.getNewHires()
+    .filter(h => h.cohortKey === cohortKey)
+    .filter(h => dashFilterPlant === 'all' || h.plant === dashFilterPlant)
+    .filter(h => !dashSearchTerm || h.name.toLowerCase().includes(dashSearchTerm))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const list = document.getElementById('dash-list');
+  const empty = document.getElementById('dash-empty');
+
+  if (hires.length === 0) {
+    list.innerHTML = '';
+    empty.classList.add('visible');
+    const hasAnyThisCohort = Store.getNewHires().some(h => h.cohortKey === cohortKey);
+    document.getElementById('dash-empty-title').textContent = hasAnyThisCohort ? 'No matches' : 'No new hires yet';
+    return;
+  }
+  empty.classList.remove('visible');
+
+  list.innerHTML = hires.map(buildHireCardHtml).join('');
+}
+
+function buildHireCardHtml(h) {
+  const statusText = { not_started: 'Not started', in_progress: 'In progress', completed: 'Completed' }[h.status] || 'Not started';
+  const flagged = isFlagged(h.id);
+  return `
+    <div class="hire-card" data-id="${h.id}">
+      <div class="hire-plant-dot plant-${h.plant.toLowerCase()}"></div>
+      <div class="hire-card-body">
+        <div class="hire-name">${escapeHtml(h.name)}</div>
+        <div class="hire-meta-row">
+          <span class="plant-badge plant-${h.plant.toLowerCase()}">${h.plant === 'P1' ? 'Plant 1' : 'Plant 2'}</span>
+          <span class="status-badge ${h.status}">${statusText}</span>
+          ${flagged ? '<span class="flag-badge">⚠ Follow up</span>' : ''}
+        </div>
+      </div>
+      <div class="hire-card-arrow">›</div>
+    </div>`;
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+document.getElementById('dash-search').addEventListener('input', e => {
+  dashSearchTerm = e.target.value.trim().toLowerCase();
+  renderDashboard();
+});
+
+document.querySelectorAll('#dash-filter-row .filter-chip').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#dash-filter-row .filter-chip').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    dashFilterPlant = btn.dataset.plant;
+    renderDashboard();
+  });
+});
+
+document.getElementById('dash-list').addEventListener('click', e => {
+  const card = e.target.closest('.hire-card');
+  if (!card) return;
+  openSurvey(card.dataset.id);
+});
+
+/* ---------- Survey ---------- */
+let currentSurveyHireId = null;
+
+function emptyResponse() {
+  const r = { mentorName: '', dateCompleted: null };
+  QUESTIONS.forEach(q => { r[q.id] = q.type === 'multi' ? { values: [], comment: '' } : { value: '', comment: '' }; });
+  return r;
+}
+
+function openSurvey(hireId) {
+  const hire = Store.getNewHires().find(h => h.id === hireId);
+  if (!hire) return;
+  currentSurveyHireId = hireId;
+  document.getElementById('survey-name-label').textContent = hire.name;
+  document.getElementById('survey-plant-label').textContent = (hire.plant === 'P1' ? 'Plant 1' : 'Plant 2') + ' · ' + cohortLabel(hire.cohortKey);
+  renderSurvey(hire);
+  showScreen('screen-survey');
+}
+document.getElementById('survey-go-back').addEventListener('click', () => { showScreen('screen-dashboard'); renderDashboard(); });
+
+function renderSurvey(hire) {
+  const stored = Store.getResponse(hire.id);
+  const response = stored ? Object.assign(emptyResponse(), stored) : emptyResponse();
+  if (!response.mentorName) response.mentorName = Store.load().mentorName || '';
+
+  const body = document.getElementById('survey-body');
+  body.innerHTML = `
+    <div class="mentor-name-card">
+      <label for="survey-mentor-name">Your name (mentor)</label>
+      <input id="survey-mentor-name" type="text" placeholder="Who's running this check-in?" autocomplete="off" value="${escapeHtml(response.mentorName)}">
+    </div>
+    ${QUESTIONS.map((q, i) => buildQuestionCard(q, i, response)).join('')}
+  `;
+
+  document.getElementById('survey-mentor-name').addEventListener('input', e => {
+    const r = Store.getResponse(hire.id) || emptyResponse();
+    r.mentorName = e.target.value;
+    Store.setResponse(hire.id, r);
+    const data = Store.load();
+    data.mentorName = e.target.value;
+    Store.save();
+  });
+
+  body.querySelectorAll('.q-card').forEach(card => {
+    const qid = card.dataset.qid;
+    const q = QUESTIONS.find(qq => qq.id === qid);
+
+    card.querySelectorAll('.q-option').forEach(optBtn => {
+      optBtn.addEventListener('click', () => {
+        const r = Store.getResponse(hire.id) || emptyResponse();
+        const val = optBtn.dataset.value;
+        if (q.type === 'single') {
+          r[qid].value = (r[qid].value === val) ? '' : val;
+        } else {
+          const set = r[qid].values || [];
+          const idx = set.indexOf(val);
+          if (idx >= 0) {
+            set.splice(idx, 1);
+          } else {
+            if (q.maxSelect && set.length >= q.maxSelect) {
+              showToast('You can select up to ' + q.maxSelect);
+              return;
+            }
+            set.push(val);
+          }
+          r[qid].values = set;
+        }
+        Store.setResponse(hire.id, r);
+        bumpStatusIfNeeded(hire.id);
+        refreshQuestionCard(card, q, r[qid]);
+      });
+    });
+
+    const commentBox = card.querySelector('.q-comment');
+    if (commentBox) {
+      commentBox.addEventListener('input', e => {
+        const r = Store.getResponse(hire.id) || emptyResponse();
+        r[qid].comment = e.target.value;
+        Store.setResponse(hire.id, r);
+        bumpStatusIfNeeded(hire.id);
+      });
+    }
+  });
+
+  updateMarkCompleteButton(hire.id);
+}
+
+function buildQuestionCard(q, index, response) {
+  const r = response[q.id];
+  const selectedSingle = q.type === 'single' ? r.value : null;
+  const selectedMulti = q.type === 'multi' ? (r.values || []) : [];
+  return `
+    <div class="q-card" data-qid="${q.id}">
+      <div class="q-number">QUESTION ${index + 1} OF ${QUESTIONS.length}</div>
+      <div class="q-text">${escapeHtml(q.text)}</div>
+      ${q.maxSelect ? `<div class="q-hint">Select up to ${q.maxSelect}</div>` : ''}
+      <div class="q-options">
+        ${q.options.map(opt => {
+          const selected = q.type === 'single' ? selectedSingle === opt.value : selectedMulti.includes(opt.value);
+          return `<button type="button" class="q-option ${q.type} ${selected ? 'selected' : ''}" data-value="${opt.value}">
+            <span class="opt-mark">${selected ? '✓' : ''}</span><span>${escapeHtml(opt.label)}</span>
+          </button>`;
+        }).join('')}
+      </div>
+      <textarea class="q-comment" placeholder="Optional comment…">${escapeHtml(r.comment || '')}</textarea>
+    </div>`;
+}
+
+function refreshQuestionCard(card, q, rq) {
+  const selected = q.type === 'single' ? rq.value : (rq.values || []);
+  card.querySelectorAll('.q-option').forEach(btn => {
+    const isSel = q.type === 'single' ? selected === btn.dataset.value : selected.includes(btn.dataset.value);
+    btn.classList.toggle('selected', isSel);
+    btn.querySelector('.opt-mark').textContent = isSel ? '✓' : '';
+  });
+}
+
+function bumpStatusIfNeeded(hireId) {
+  const hire = Store.getNewHires().find(h => h.id === hireId);
+  if (hire && hire.status === 'not_started') Store.updateNewHire(hireId, { status: 'in_progress' });
+}
+
+function updateMarkCompleteButton(hireId) {
+  const hire = Store.getNewHires().find(h => h.id === hireId);
+  const btn = document.getElementById('survey-mark-complete');
+  const done = hire && hire.status === 'completed';
+  btn.textContent = done ? '✓ Completed — Tap to Reopen' : 'Mark as Completed';
+  btn.classList.toggle('done', done);
+}
+
+document.getElementById('survey-mark-complete').addEventListener('click', () => {
+  if (!currentSurveyHireId) return;
+  const hire = Store.getNewHires().find(h => h.id === currentSurveyHireId);
+  if (!hire) return;
+  if (hire.status === 'completed') {
+    Store.updateNewHire(hire.id, { status: 'in_progress' });
+  } else {
+    const r = Store.getResponse(hire.id) || emptyResponse();
+    r.dateCompleted = new Date().toISOString();
+    Store.setResponse(hire.id, r);
+    Store.updateNewHire(hire.id, { status: 'completed' });
+    showToast('Marked complete');
+  }
+  updateMarkCompleteButton(hire.id);
+});
+
+/* ---------- History ---------- */
+let currentHistoryCohortKey = null;
+
+function renderHistoryList() {
+  const cur = currentCohortKey();
+  const hires = Store.getNewHires().filter(h => h.cohortKey !== cur);
+  const keys = [...new Set(hires.map(h => h.cohortKey))].sort().reverse();
+  const list = document.getElementById('history-list');
+  if (keys.length === 0) {
+    list.innerHTML = '<div class="placeholder-body"><h2>No past cohorts yet</h2><div>Once a new month starts, completed months will show up here.</div></div>';
+    return;
+  }
+  list.innerHTML = keys.map(k => {
+    const count = hires.filter(h => h.cohortKey === k).length;
+    return `<div class="cohort-card" data-cohort="${k}">
+      <div><div class="cohort-card-label">${cohortLabel(k)}</div><div class="cohort-card-count">${count} new hire${count === 1 ? '' : 's'}</div></div>
+      <div class="cohort-card-arrow">›</div>
+    </div>`;
+  }).join('');
+}
+
+function renderHistoryCohortList(cohortKey) {
+  currentHistoryCohortKey = cohortKey;
+  document.getElementById('history-cohort-label').textContent = cohortLabel(cohortKey);
+  const hires = Store.getNewHires().filter(h => h.cohortKey === cohortKey).sort((a, b) => a.name.localeCompare(b.name));
+  document.getElementById('history-cohort-list').innerHTML = hires.map(buildHireCardHtml).join('');
+}
+
+function buildReadonlyQuestionCard(q, index, response) {
+  const r = response ? response[q.id] : null;
+  const selectedSingle = q.type === 'single' && r ? r.value : null;
+  const selectedMulti = q.type === 'multi' && r ? (r.values || []) : [];
+  const comment = r ? (r.comment || '') : '';
+  const optionsHtml = q.options.map(opt => {
+    const selected = q.type === 'single' ? selectedSingle === opt.value : selectedMulti.includes(opt.value);
+    if (!selected) return '';
+    return `<div class="q-option ${q.type} readonly selected"><span class="opt-mark">✓</span><span>${escapeHtml(opt.label)}</span></div>`;
+  }).join('') || '<div class="readonly-meta">No answer selected</div>';
+  return `
+    <div class="q-card">
+      <div class="q-number">QUESTION ${index + 1} OF ${QUESTIONS.length}</div>
+      <div class="q-text">${escapeHtml(q.text)}</div>
+      <div class="q-options">${optionsHtml}</div>
+      ${comment ? `<div class="q-comment-readonly">"${escapeHtml(comment)}"</div>` : ''}
+    </div>`;
+}
+
+function openHistoryDetail(hireId) {
+  const hire = Store.getNewHires().find(h => h.id === hireId);
+  if (!hire) return;
+  const response = Store.getResponse(hireId);
+  document.getElementById('history-detail-name').textContent = hire.name;
+  document.getElementById('history-detail-plant').textContent = (hire.plant === 'P1' ? 'Plant 1' : 'Plant 2') + ' · ' + cohortLabel(hire.cohortKey);
+  const metaLine = response
+    ? `Mentor: ${escapeHtml(response.mentorName || '—')} · Completed: ${response.dateCompleted ? new Date(response.dateCompleted).toLocaleDateString() : '—'}`
+    : 'No response recorded yet.';
+  document.getElementById('history-detail-body').innerHTML =
+    `<div class="readonly-meta">${metaLine}</div>` + QUESTIONS.map((q, i) => buildReadonlyQuestionCard(q, i, response)).join('');
+  showScreen('screen-history-detail');
+}
+
+document.getElementById('btn-go-history').addEventListener('click', () => { renderHistoryList(); showScreen('screen-history'); });
+document.getElementById('history-go-back').addEventListener('click', () => showScreen('screen-dashboard'));
+document.getElementById('history-list').addEventListener('click', e => {
+  const card = e.target.closest('.cohort-card');
+  if (!card) return;
+  renderHistoryCohortList(card.dataset.cohort);
+  showScreen('screen-history-cohort');
+});
+document.getElementById('history-cohort-go-back').addEventListener('click', () => showScreen('screen-history'));
+document.getElementById('history-cohort-list').addEventListener('click', e => {
+  const card = e.target.closest('.hire-card');
+  if (!card) return;
+  openHistoryDetail(card.dataset.id);
+});
+document.getElementById('history-detail-go-back').addEventListener('click', () => showScreen('screen-history-cohort'));
+
+/* ---------- Export ---------- */
+let exportSelected = new Set();
+const STATUS_TEXT = { not_started: 'Not started', in_progress: 'In progress', completed: 'Completed' };
+
+function currentCohortHires() {
+  const cohortKey = currentCohortKey();
+  return Store.getNewHires().filter(h => h.cohortKey === cohortKey).sort((a, b) => a.name.localeCompare(b.name));
+}
+
+function renderExportScreen() {
+  document.getElementById('export-cohort-label').textContent = 'Export · ' + cohortLabel(currentCohortKey());
+  const hires = currentCohortHires();
+  exportSelected = new Set(hires.map(h => h.id));
+  renderExportList(hires);
+  updateExportCount();
+  updateSelectAllBtn();
+}
+
+function renderExportList(hires) {
+  const list = document.getElementById('export-list');
+  if (hires.length === 0) {
+    list.innerHTML = '<div class="placeholder-body"><h2>No new hires this month</h2><div>Add new hires from the dashboard first.</div></div>';
+    return;
+  }
+  list.innerHTML = hires.map(h => `
+    <label class="export-hire-row">
+      <input type="checkbox" class="export-checkbox" data-id="${h.id}" ${exportSelected.has(h.id) ? 'checked' : ''}>
+      <div class="hire-card-body">
+        <div class="hire-name">${escapeHtml(h.name)}</div>
+        <div class="hire-meta-row">
+          <span class="plant-badge plant-${h.plant.toLowerCase()}">${h.plant === 'P1' ? 'Plant 1' : 'Plant 2'}</span>
+          <span class="status-badge ${h.status}">${STATUS_TEXT[h.status] || 'Not started'}</span>
+        </div>
+      </div>
+    </label>`).join('');
+}
+
+function updateExportCount() {
+  document.getElementById('export-count-label').textContent = exportSelected.size + ' selected';
+}
+
+function updateSelectAllBtn() {
+  const total = currentCohortHires().length;
+  document.getElementById('export-select-all').classList.toggle('active', exportSelected.size === total && total > 0);
+}
+
+document.getElementById('export-list').addEventListener('change', e => {
+  const cb = e.target.closest('.export-checkbox');
+  if (!cb) return;
+  if (cb.checked) exportSelected.add(cb.dataset.id); else exportSelected.delete(cb.dataset.id);
+  updateExportCount();
+  updateSelectAllBtn();
+});
+
+document.getElementById('export-select-all').addEventListener('click', () => {
+  const hires = currentCohortHires();
+  const allSelected = exportSelected.size === hires.length && hires.length > 0;
+  exportSelected = allSelected ? new Set() : new Set(hires.map(h => h.id));
+  renderExportList(hires);
+  updateExportCount();
+  updateSelectAllBtn();
+});
+
+function getSelectedExportHires() {
+  return currentCohortHires().filter(h => exportSelected.has(h.id));
+}
+
+function formatAnswer(q, r) {
+  if (!r) return null;
+  if (q.type === 'single') {
+    if (!r.value) return null;
+    const opt = q.options.find(o => o.value === r.value);
+    return opt ? opt.label : r.value;
+  }
+  const vals = r.values || [];
+  if (vals.length === 0) return null;
+  return vals.map(v => { const o = q.options.find(o => o.value === v); return o ? o.label : v; }).join('; ');
+}
+
+function buildEmployeeSummary(h) {
+  const response = Store.getResponse(h.id);
+  const lines = [];
+  lines.push(h.name + ' — ' + (h.plant === 'P1' ? 'Plant 1' : 'Plant 2'));
+  lines.push('Cohort: ' + cohortLabel(h.cohortKey) + ' · Status: ' + (STATUS_TEXT[h.status] || 'Not started'));
+  if (response) {
+    lines.push('Mentor: ' + (response.mentorName || '—') + ' · Completed: ' + (response.dateCompleted ? new Date(response.dateCompleted).toLocaleDateString() : '—'));
+  }
+  lines.push('');
+  QUESTIONS.forEach((q, i) => {
+    lines.push('Q' + (i + 1) + '. ' + q.text);
+    const r = response ? response[q.id] : null;
+    lines.push('A: ' + (formatAnswer(q, r) || '(no answer)'));
+    if (r && r.comment) lines.push('Comment: ' + r.comment);
+    lines.push('');
+  });
+  return lines.join('\n');
+}
+
+function buildFullSummaryText(hires) {
+  return hires.map(buildEmployeeSummary).join('\n' + '-'.repeat(40) + '\n\n');
+}
+
+function csvEscape(val) {
+  const s = String(val == null ? '' : val);
+  return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+
+function buildCsv(hires) {
+  const headers = ['Name', 'Plant', 'Cohort', 'Status', 'Mentor', 'Date Completed'];
+  QUESTIONS.forEach((q, i) => { headers.push('Q' + (i + 1) + ' Answer'); headers.push('Q' + (i + 1) + ' Comment'); });
+  const rows = [headers];
+  hires.forEach(h => {
+    const response = Store.getResponse(h.id);
+    const row = [
+      h.name, h.plant === 'P1' ? 'Plant 1' : 'Plant 2', cohortLabel(h.cohortKey),
+      STATUS_TEXT[h.status] || 'Not started',
+      response ? (response.mentorName || '') : '',
+      response && response.dateCompleted ? new Date(response.dateCompleted).toLocaleDateString() : '',
+    ];
+    QUESTIONS.forEach(q => {
+      const r = response ? response[q.id] : null;
+      row.push(formatAnswer(q, r) || '');
+      row.push(r ? (r.comment || '') : '');
+    });
+    rows.push(row);
+  });
+  return rows.map(row => row.map(csvEscape).join(',')).join('\r\n');
+}
+
+function downloadTextFile(filename, content, mime) {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+document.getElementById('export-copy-summary').addEventListener('click', async () => {
+  const hires = getSelectedExportHires();
+  if (hires.length === 0) { showToast('Select at least one new hire'); return; }
+  try {
+    await navigator.clipboard.writeText(buildFullSummaryText(hires));
+    showToast('Copied to clipboard');
+  } catch (e) {
+    showToast('Copy failed — try downloading instead');
+  }
+});
+
+document.getElementById('export-download-summary').addEventListener('click', () => {
+  const hires = getSelectedExportHires();
+  if (hires.length === 0) { showToast('Select at least one new hire'); return; }
+  downloadTextFile('mentor-checkin-' + currentCohortKey() + '.txt', buildFullSummaryText(hires), 'text/plain');
+});
+
+document.getElementById('export-download-csv').addEventListener('click', () => {
+  const hires = getSelectedExportHires();
+  if (hires.length === 0) { showToast('Select at least one new hire'); return; }
+  downloadTextFile('mentor-checkin-' + currentCohortKey() + '.csv', buildCsv(hires), 'text/csv');
+});
+
+document.getElementById('btn-go-export').addEventListener('click', () => { renderExportScreen(); showScreen('screen-export'); });
+document.getElementById('export-go-back').addEventListener('click', () => showScreen('screen-dashboard'));
+
+/* ---------- Add New Hire (single) ---------- */
+let addOnePlant = null;
+function openAddOne() {
+  document.getElementById('add-one-name').value = '';
+  addOnePlant = null;
+  document.querySelectorAll('#add-one-overlay .plant-pick-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('add-one-cohort-hint').textContent = 'Will be added to ' + cohortLabel(currentCohortKey()) + '.';
+  document.getElementById('add-one-overlay').classList.add('visible');
+  document.getElementById('add-one-name').focus();
+}
+document.getElementById('btn-add-one').addEventListener('click', openAddOne);
+document.getElementById('add-one-cancel').addEventListener('click', () => document.getElementById('add-one-overlay').classList.remove('visible'));
+document.querySelectorAll('#add-one-overlay .plant-pick-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    addOnePlant = btn.dataset.plant;
+    document.querySelectorAll('#add-one-overlay .plant-pick-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  });
+});
+document.getElementById('add-one-save').addEventListener('click', () => {
+  const name = document.getElementById('add-one-name').value.trim();
+  if (!name) { showToast('Enter a name'); return; }
+  if (!addOnePlant) { showToast('Select a plant'); return; }
+  Store.addNewHire({
+    id: uid(), name, plant: addOnePlant, cohortKey: currentCohortKey(),
+    dateAdded: new Date().toISOString(), status: 'not_started',
+  });
+  document.getElementById('add-one-overlay').classList.remove('visible');
+  showToast('Added ' + name);
+  renderDashboard();
+});
+
+/* ---------- Add New Hires (bulk paste) ---------- */
+let addBulkPlant = null;
+function openAddBulk() {
+  document.getElementById('add-bulk-text').value = '';
+  addBulkPlant = null;
+  document.querySelectorAll('#add-bulk-overlay .plant-pick-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('add-bulk-cohort-hint').textContent = 'Will be added to ' + cohortLabel(currentCohortKey()) + '.';
+  document.getElementById('add-bulk-overlay').classList.add('visible');
+  document.getElementById('add-bulk-text').focus();
+}
+document.getElementById('btn-add-bulk').addEventListener('click', openAddBulk);
+document.getElementById('add-bulk-cancel').addEventListener('click', () => document.getElementById('add-bulk-overlay').classList.remove('visible'));
+document.querySelectorAll('#add-bulk-overlay .plant-pick-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    addBulkPlant = btn.dataset.plant;
+    document.querySelectorAll('#add-bulk-overlay .plant-pick-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  });
+});
+document.getElementById('add-bulk-save').addEventListener('click', () => {
+  const names = document.getElementById('add-bulk-text').value.split('\n').map(s => s.trim()).filter(Boolean);
+  if (names.length === 0) { showToast('Paste at least one name'); return; }
+  if (!addBulkPlant) { showToast('Select a plant'); return; }
+  const cohortKey = currentCohortKey();
+  names.forEach(name => {
+    Store.addNewHire({
+      id: uid(), name, plant: addBulkPlant, cohortKey,
+      dateAdded: new Date().toISOString(), status: 'not_started',
+    });
+  });
+  document.getElementById('add-bulk-overlay').classList.remove('visible');
+  showToast('Added ' + names.length + (names.length === 1 ? ' name' : ' names'));
+  renderDashboard();
+});
+
+/* ---------- Service worker ---------- */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
+
+renderDashboard();
+</script>
+</body>
+</html>
