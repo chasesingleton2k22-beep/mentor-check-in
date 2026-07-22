@@ -32,6 +32,35 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial
 .topbar-right { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
 .icon-btn { background: none; border: 2px solid var(--gold); color: var(--gold-light); border-radius: 8px; padding: 6px 12px; font-size: 0.92rem; min-height: 42px; font-weight: bold; cursor: pointer; }
 .icon-btn:active { background: var(--gold); color: var(--navy); }
+.plant-switch-pill { margin-top: 3px; border: none; border-radius: 8px; padding: 3px 9px; font-size: 0.76rem; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+.plant-switch-pill.plant-p1 { background: var(--p1); color: #fff; }
+.plant-switch-pill.plant-p2 { background: var(--p2); color: var(--navy); }
+.plant-switch-pill:active { filter: brightness(1.15); }
+
+/* Plant Select */
+#screen-plant-select { align-items: center; justify-content: center; background: radial-gradient(ellipse at 50% 38%, #1b3f85 0%, #091d44 100%); }
+.plant-select-inner { display: flex; flex-direction: column; align-items: center; gap: 26px; padding: 24px; width: 100%; }
+.plant-select-brand { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-bottom: 12px; }
+.plant-select-tag { font-size: 0.72rem; letter-spacing: 0.3em; color: var(--gold); font-weight: bold; }
+.plant-select-tool { font-size: 1.6rem; font-weight: bold; color: var(--gold-light); letter-spacing: 0.04em; }
+.plant-select-btn { width: 90%; max-width: 420px; min-height: 110px; border: 3px solid; border-radius: 18px; font-size: 1.7rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.1); letter-spacing: 0.05em; }
+.plant-select-btn.plant-p1 { background: linear-gradient(180deg, #3a7bea 0%, #1c4faa 100%); border-color: var(--p1-light); color: #fff; }
+.plant-select-btn.plant-p2 { background: linear-gradient(180deg, #f2c34a 0%, #d69a10 100%); border-color: var(--gold-light); color: var(--navy); }
+.plant-select-btn:active { filter: brightness(1.15); }
+
+/* PIN entry / setup */
+#screen-pin-entry, #screen-pin-setup { align-items: center; justify-content: center; background: radial-gradient(ellipse at 50% 30%, #1b3f85 0%, #091d44 100%); }
+.pin-inner { display: flex; flex-direction: column; align-items: stretch; gap: 14px; padding: 24px; width: 100%; max-width: 380px; margin: 0 auto; }
+.pin-plant-label { text-align: center; font-size: 0.8rem; font-weight: bold; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); }
+.pin-title { text-align: center; font-size: 1.3rem; font-weight: bold; color: var(--gold-light); margin-bottom: 4px; }
+.pin-input { min-height: 58px; font-size: 1.4rem; text-align: center; letter-spacing: 0.3em; border-radius: 12px; border: 2px solid rgba(212,160,23,0.4); background: rgba(255,255,255,0.08); color: var(--text-light); font-family: inherit; }
+.pin-input:focus { outline: 2px solid var(--gold); border-color: transparent; }
+.pin-input::placeholder { color: #6a7aa0; letter-spacing: normal; }
+.pin-btn { min-height: 56px; border-radius: 12px; border: none; font-size: 1.05rem; font-weight: bold; cursor: pointer; }
+.pin-btn.primary { background: var(--gold); color: var(--navy); }
+.pin-btn.primary:active { background: var(--gold-light); }
+.pin-btn.secondary { background: transparent; border: 2px solid #888; color: #ccc; }
+.pin-btn.secondary:active { border-color: var(--gold); color: var(--gold-light); }
 
 /* Dashboard */
 #screen-dashboard { background: radial-gradient(ellipse at 50% 0%, #162f6e 0%, #091d44 100%); }
@@ -39,10 +68,6 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial
 #dash-search { min-height: 46px; border-radius: 10px; border: 2px solid rgba(212,160,23,0.4); background: rgba(255,255,255,0.08); color: var(--text-light); padding: 8px 14px; font-size: 1rem; font-family: inherit; }
 #dash-search::placeholder { color: #7a8aaa; }
 #dash-search:focus { outline: 2px solid var(--gold); border-color: transparent; }
-#dash-filter-row { display: flex; gap: 8px; }
-.filter-chip { flex: 1; min-height: 40px; border-radius: 20px; border: 2px solid rgba(212,160,23,0.4); background: rgba(255,255,255,0.06); color: #c9d4ea; font-size: 0.88rem; font-weight: bold; cursor: pointer; }
-.filter-chip.active { background: var(--gold); border-color: var(--gold); color: var(--navy); }
-.filter-chip:active { filter: brightness(1.2); }
 #dash-empty { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 32px; text-align: center; color: #9aabcc; }
 #dash-empty.visible { display: flex; }
 #dash-empty-title { font-size: 1.1rem; font-weight: bold; color: var(--gold-light); }
@@ -56,9 +81,6 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial
 .hire-card-body { flex: 1; min-width: 0; }
 .hire-name { font-size: 1.08rem; font-weight: bold; color: var(--text-light); }
 .hire-meta-row { display: flex; align-items: center; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
-.plant-badge { font-size: 0.72rem; font-weight: bold; border-radius: 6px; padding: 2px 8px; text-transform: uppercase; letter-spacing: 0.03em; }
-.plant-badge.plant-p1 { background: var(--p1); color: #fff; }
-.plant-badge.plant-p2 { background: var(--p2); color: var(--navy); }
 .status-badge { font-size: 0.72rem; font-weight: bold; border-radius: 6px; padding: 2px 8px; }
 .status-badge.not_started { background: rgba(90,106,138,0.4); color: #c9d4ea; }
 .status-badge.in_progress { background: rgba(30,136,229,0.3); color: #8ec3f5; }
@@ -89,11 +111,6 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial
 .field-group textarea { min-height: 110px; resize: vertical; }
 .field-group input:focus, .field-group textarea:focus { outline: 2px solid var(--gold); border-color: transparent; }
 .field-group input::placeholder, .field-group textarea::placeholder { color: #6a7aa0; }
-.plant-pick-row { display: flex; gap: 10px; }
-.plant-pick-btn { flex: 1; min-height: 54px; border-radius: 12px; border: 3px solid rgba(212,160,23,0.35); background: rgba(255,255,255,0.06); color: var(--text-light); font-weight: bold; font-size: 1rem; cursor: pointer; }
-.plant-pick-btn.sel-p1.selected { background: var(--p1); border-color: var(--p1-light); }
-.plant-pick-btn.sel-p2.selected { background: var(--p2); border-color: var(--p2-light); color: var(--navy); }
-.plant-pick-btn:active { filter: brightness(1.2); }
 .sheet-btn-row { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
 .sheet-btn { min-height: 56px; border-radius: 12px; border: none; font-size: 1.05rem; font-weight: bold; cursor: pointer; }
 .sheet-btn.primary { background: var(--gold); color: var(--navy); }
@@ -172,12 +189,48 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial
 <body>
 <div id="app">
 
+<!-- Plant Select -->
+<div class="screen active" id="screen-plant-select">
+  <div class="plant-select-inner">
+    <div class="plant-select-brand">
+      <div class="plant-select-tag">TAG MANUFACTURING</div>
+      <div class="plant-select-tool">Mentor Check-In</div>
+    </div>
+    <button type="button" class="plant-select-btn plant-p1" id="btn-select-p1">Plant 1</button>
+    <button type="button" class="plant-select-btn plant-p2" id="btn-select-p2">Plant 2</button>
+  </div>
+</div>
+
+<!-- PIN entry (plant already has a PIN set) -->
+<div class="screen" id="screen-pin-entry">
+  <div class="pin-inner">
+    <div class="pin-plant-label" id="pin-entry-plant-label">Plant</div>
+    <div class="pin-title">Enter PIN</div>
+    <input id="pin-entry-input" type="password" inputmode="numeric" autocomplete="off" class="pin-input" placeholder="••••">
+    <button type="button" class="pin-btn primary" id="pin-entry-unlock">Unlock</button>
+    <button type="button" class="pin-btn secondary" id="pin-entry-switch">Switch Plant</button>
+  </div>
+</div>
+
+<!-- PIN setup (first time this plant is opened on this device) -->
+<div class="screen" id="screen-pin-setup">
+  <div class="pin-inner">
+    <div class="pin-plant-label" id="pin-setup-plant-label">Plant</div>
+    <div class="pin-title">Create a PIN for this plant</div>
+    <div class="hint-text">This is a light lock, not full security — it just keeps casual eyes off the survey data on this phone. Remember it; there's no in-app reset.</div>
+    <input id="pin-setup-input" type="password" inputmode="numeric" autocomplete="off" class="pin-input" placeholder="New PIN">
+    <input id="pin-setup-confirm" type="password" inputmode="numeric" autocomplete="off" class="pin-input" placeholder="Confirm PIN">
+    <button type="button" class="pin-btn primary" id="pin-setup-save">Save PIN</button>
+    <button type="button" class="pin-btn secondary" id="pin-setup-switch">Switch Plant</button>
+  </div>
+</div>
+
 <!-- Dashboard -->
-<div class="screen active" id="screen-dashboard">
+<div class="screen" id="screen-dashboard">
   <div class="topbar">
     <div>
       <div class="topbar-title" id="dash-cohort-label">Cohort</div>
-      <div class="topbar-subtitle">Mentor Check-In · TAG Mfg</div>
+      <button type="button" class="plant-switch-pill" id="btn-switch-plant"><span id="dash-plant-name">Plant</span> ⇄</button>
     </div>
     <div class="topbar-right">
       <button class="icon-btn" id="btn-go-history">History</button>
@@ -186,11 +239,6 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial
   </div>
   <div id="dash-toolbar">
     <input id="dash-search" type="text" placeholder="Search by name…" autocomplete="off">
-    <div id="dash-filter-row">
-      <button class="filter-chip active" data-plant="all">All</button>
-      <button class="filter-chip" data-plant="P1">Plant 1</button>
-      <button class="filter-chip" data-plant="P2">Plant 2</button>
-    </div>
   </div>
   <div id="dash-empty">
     <div id="dash-empty-title">No new hires yet</div>
@@ -276,13 +324,6 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial
       <label for="add-one-name">Name</label>
       <input id="add-one-name" type="text" placeholder="Full name" autocomplete="off">
     </div>
-    <div class="field-group">
-      <label>Plant</label>
-      <div class="plant-pick-row">
-        <button class="plant-pick-btn sel-p1" data-plant="P1">Plant 1</button>
-        <button class="plant-pick-btn sel-p2" data-plant="P2">Plant 2</button>
-      </div>
-    </div>
     <div class="hint-text" id="add-one-cohort-hint"></div>
     <div class="sheet-btn-row">
       <button class="sheet-btn primary" id="add-one-save">Add New Hire</button>
@@ -295,17 +336,10 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial
 <div class="sheet-overlay" id="add-bulk-overlay">
   <div class="sheet-modal">
     <div class="sheet-title">Paste List of Names</div>
-    <div class="hint-text">One name per line. All names will be added to the plant selected below.</div>
+    <div class="hint-text">One name per line — paste the whole list straight from the monthly email.</div>
     <div class="field-group">
       <label for="add-bulk-text">Names</label>
       <textarea id="add-bulk-text" placeholder="Jane Smith&#10;John Doe&#10;..."></textarea>
-    </div>
-    <div class="field-group">
-      <label>Plant</label>
-      <div class="plant-pick-row">
-        <button class="plant-pick-btn sel-p1" data-plant="P1">Plant 1</button>
-        <button class="plant-pick-btn sel-p2" data-plant="P2">Plant 2</button>
-      </div>
     </div>
     <div class="hint-text" id="add-bulk-cohort-hint"></div>
     <div class="sheet-btn-row">
@@ -322,13 +356,6 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial
     <div class="field-group">
       <label for="edit-hire-name">Name</label>
       <input id="edit-hire-name" type="text" placeholder="Full name" autocomplete="off">
-    </div>
-    <div class="field-group">
-      <label>Plant</label>
-      <div class="plant-pick-row">
-        <button class="plant-pick-btn sel-p1" data-plant="P1">Plant 1</button>
-        <button class="plant-pick-btn sel-p2" data-plant="P2">Plant 2</button>
-      </div>
     </div>
     <div class="sheet-btn-row">
       <button class="sheet-btn primary" id="edit-hire-save">Save Changes</button>
@@ -353,11 +380,20 @@ const Store = {
     let parsed = null;
     try { parsed = JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch (e) {}
     this._data = parsed && typeof parsed === 'object'
-      ? Object.assign({ newHires: [], responses: {}, mentorName: '' }, parsed)
-      : { newHires: [], responses: {}, mentorName: '' };
+      ? Object.assign({ newHires: [], responses: {}, mentorName: '', currentPlant: null, pins: {} }, parsed)
+      : { newHires: [], responses: {}, mentorName: '', currentPlant: null, pins: {} };
     return this._data;
   },
   save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(this._data)); },
+  getCurrentPlant() { return this.load().currentPlant || null; },
+  setCurrentPlant(plant) { this.load().currentPlant = plant; this.save(); },
+  getPin(plant) { return (this.load().pins || {})[plant] || null; },
+  setPin(plant, pin) {
+    const data = this.load();
+    data.pins = data.pins || {};
+    data.pins[plant] = pin;
+    this.save();
+  },
   getNewHires() { return this.load().newHires; },
   getResponse(hireId) { return this.load().responses[hireId] || null; },
   setResponse(hireId, response) { this.load().responses[hireId] = response; this.save(); },
@@ -494,6 +530,84 @@ function restoreScreen(state) {
 
 window.addEventListener('popstate', e => restoreScreen(e.state));
 
+/* ---------- Plant gate ----------
+   Each device "belongs" to one plant at a time (Store.currentPlant), picked
+   once and remembered. Everything else in the app queries only that
+   plant's data. Plant Select / Switch Plant stay outside the pushState
+   system on purpose — they're boot/reset states, not screens you'd want
+   the hardware back button landing on mid-navigation. */
+let currentPlant = null;
+let pendingPlant = null;
+
+function plantLabel(p) { return p === 'P1' ? 'Plant 1' : 'Plant 2'; }
+
+function bootApp() {
+  const plant = Store.getCurrentPlant();
+  if (!plant) { showScreen('screen-plant-select'); return; }
+  goToPinFlow(plant);
+}
+
+function selectPlant(plant) {
+  Store.setCurrentPlant(plant);
+  goToPinFlow(plant);
+}
+
+function goToPinFlow(plant) {
+  pendingPlant = plant;
+  if (Store.getPin(plant)) {
+    document.getElementById('pin-entry-plant-label').textContent = plantLabel(plant);
+    document.getElementById('pin-entry-input').value = '';
+    showScreen('screen-pin-entry');
+    document.getElementById('pin-entry-input').focus();
+  } else {
+    document.getElementById('pin-setup-plant-label').textContent = plantLabel(plant);
+    document.getElementById('pin-setup-input').value = '';
+    document.getElementById('pin-setup-confirm').value = '';
+    showScreen('screen-pin-setup');
+    document.getElementById('pin-setup-input').focus();
+  }
+}
+
+function enterPlant(plant) {
+  currentPlant = plant;
+  const pill = document.getElementById('btn-switch-plant');
+  document.getElementById('dash-plant-name').textContent = plantLabel(plant);
+  pill.classList.remove('plant-p1', 'plant-p2');
+  pill.classList.add('plant-' + plant.toLowerCase());
+  renderDashboard();
+  showScreen('screen-dashboard');
+  history.replaceState({ screen: 'screen-dashboard' }, '', location.pathname);
+}
+
+document.getElementById('btn-select-p1').addEventListener('click', () => selectPlant('P1'));
+document.getElementById('btn-select-p2').addEventListener('click', () => selectPlant('P2'));
+document.getElementById('btn-switch-plant').addEventListener('click', () => showScreen('screen-plant-select'));
+
+document.getElementById('pin-entry-unlock').addEventListener('click', () => {
+  const val = document.getElementById('pin-entry-input').value.trim();
+  if (val && val === Store.getPin(pendingPlant)) {
+    enterPlant(pendingPlant);
+  } else {
+    showToast('Incorrect PIN', 'warn');
+    document.getElementById('pin-entry-input').value = '';
+    document.getElementById('pin-entry-input').focus();
+  }
+});
+document.getElementById('pin-entry-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('pin-entry-unlock').click();
+});
+document.getElementById('pin-entry-switch').addEventListener('click', () => showScreen('screen-plant-select'));
+
+document.getElementById('pin-setup-save').addEventListener('click', () => {
+  const pin = document.getElementById('pin-setup-input').value.trim();
+  const confirmPin = document.getElementById('pin-setup-confirm').value.trim();
+  if (!pin) { showToast('Enter a PIN', 'warn'); return; }
+  if (pin !== confirmPin) { showToast('PINs do not match', 'warn'); return; }
+  Store.setPin(pendingPlant, pin);
+  enterPlant(pendingPlant);
+});
+document.getElementById('pin-setup-switch').addEventListener('click', () => showScreen('screen-plant-select'));
+
 function showToast(msg, type) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -504,7 +618,6 @@ function showToast(msg, type) {
 }
 
 /* ---------- Dashboard ---------- */
-let dashFilterPlant = 'all';
 let dashSearchTerm = '';
 
 function renderDashboard() {
@@ -512,8 +625,8 @@ function renderDashboard() {
   document.getElementById('dash-cohort-label').textContent = cohortLabel(cohortKey);
 
   const hires = Store.getNewHires()
+    .filter(h => h.plant === currentPlant)
     .filter(h => h.cohortKey === cohortKey)
-    .filter(h => dashFilterPlant === 'all' || h.plant === dashFilterPlant)
     .filter(h => !dashSearchTerm || h.name.toLowerCase().includes(dashSearchTerm))
     .sort((a, b) => a.name.localeCompare(b.name));
 
@@ -523,7 +636,7 @@ function renderDashboard() {
   if (hires.length === 0) {
     list.innerHTML = '';
     empty.classList.add('visible');
-    const hasAnyThisCohort = Store.getNewHires().some(h => h.cohortKey === cohortKey);
+    const hasAnyThisCohort = Store.getNewHires().some(h => h.plant === currentPlant && h.cohortKey === cohortKey);
     document.getElementById('dash-empty-title').textContent = hasAnyThisCohort ? 'No matches' : 'No new hires yet';
     return;
   }
@@ -542,7 +655,6 @@ function buildHireCardHtml(h, opts) {
       <div class="hire-card-body">
         <div class="hire-name">${escapeHtml(h.name)}</div>
         <div class="hire-meta-row">
-          <span class="plant-badge plant-${h.plant.toLowerCase()}">${h.plant === 'P1' ? 'Plant 1' : 'Plant 2'}</span>
           <span class="status-badge ${h.status}">${statusText}</span>
           ${flagged ? '<span class="flag-badge">⚠ Follow up</span>' : ''}
         </div>
@@ -561,15 +673,6 @@ document.getElementById('dash-search').addEventListener('input', e => {
   renderDashboard();
 });
 
-document.querySelectorAll('#dash-filter-row .filter-chip').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('#dash-filter-row .filter-chip').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    dashFilterPlant = btn.dataset.plant;
-    renderDashboard();
-  });
-});
-
 document.getElementById('dash-list').addEventListener('click', e => {
   const editBtn = e.target.closest('.hire-edit-btn');
   if (editBtn) { openEditHire(editBtn.dataset.editId); return; }
@@ -585,22 +688,13 @@ function openEditHire(hireId) {
   if (!hire) return;
   editHireId = hireId;
   document.getElementById('edit-hire-name').value = hire.name;
-  document.querySelectorAll('#edit-hire-overlay .plant-pick-btn').forEach(b => b.classList.toggle('selected', b.dataset.plant === hire.plant));
   document.getElementById('edit-hire-overlay').classList.add('visible');
 }
-document.querySelectorAll('#edit-hire-overlay .plant-pick-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('#edit-hire-overlay .plant-pick-btn').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-  });
-});
 document.getElementById('edit-hire-cancel').addEventListener('click', () => document.getElementById('edit-hire-overlay').classList.remove('visible'));
 document.getElementById('edit-hire-save').addEventListener('click', () => {
   const name = document.getElementById('edit-hire-name').value.trim();
-  const plantBtn = document.querySelector('#edit-hire-overlay .plant-pick-btn.selected');
   if (!name) { showToast('Enter a name', 'warn'); return; }
-  if (!plantBtn) { showToast('Select a plant', 'warn'); return; }
-  Store.updateNewHire(editHireId, { name, plant: plantBtn.dataset.plant });
+  Store.updateNewHire(editHireId, { name });
   document.getElementById('edit-hire-overlay').classList.remove('visible');
   showToast('Saved');
   renderDashboard();
@@ -774,7 +868,7 @@ let currentHistoryCohortKey = null;
 
 function renderHistoryList() {
   const cur = currentCohortKey();
-  const hires = Store.getNewHires().filter(h => h.cohortKey !== cur);
+  const hires = Store.getNewHires().filter(h => h.plant === currentPlant && h.cohortKey !== cur);
   const keys = [...new Set(hires.map(h => h.cohortKey))].sort().reverse();
   const list = document.getElementById('history-list');
   if (keys.length === 0) {
@@ -793,8 +887,8 @@ function renderHistoryList() {
 function renderHistoryCohortList(cohortKey) {
   currentHistoryCohortKey = cohortKey;
   document.getElementById('history-cohort-label').textContent = cohortLabel(cohortKey);
-  const hires = Store.getNewHires().filter(h => h.cohortKey === cohortKey).sort((a, b) => a.name.localeCompare(b.name));
-  document.getElementById('history-cohort-list').innerHTML = hires.map(buildHireCardHtml).join('');
+  const hires = Store.getNewHires().filter(h => h.plant === currentPlant && h.cohortKey === cohortKey).sort((a, b) => a.name.localeCompare(b.name));
+  document.getElementById('history-cohort-list').innerHTML = hires.map(h => buildHireCardHtml(h)).join('');
 }
 
 function buildReadonlyQuestionCard(q, index, response) {
@@ -856,7 +950,7 @@ const STATUS_TEXT = { not_started: 'Not started', in_progress: 'In progress', co
 
 function currentCohortHires() {
   const cohortKey = currentCohortKey();
-  return Store.getNewHires().filter(h => h.cohortKey === cohortKey).sort((a, b) => a.name.localeCompare(b.name));
+  return Store.getNewHires().filter(h => h.plant === currentPlant && h.cohortKey === cohortKey).sort((a, b) => a.name.localeCompare(b.name));
 }
 
 function renderExportScreen() {
@@ -880,7 +974,6 @@ function renderExportList(hires) {
       <div class="hire-card-body">
         <div class="hire-name">${escapeHtml(h.name)}</div>
         <div class="hire-meta-row">
-          <span class="plant-badge plant-${h.plant.toLowerCase()}">${h.plant === 'P1' ? 'Plant 1' : 'Plant 2'}</span>
           <span class="status-badge ${h.status}">${STATUS_TEXT[h.status] || 'Not started'}</span>
         </div>
       </div>
@@ -1015,30 +1108,19 @@ document.getElementById('btn-go-export').addEventListener('click', () => { rende
 document.getElementById('export-go-back').addEventListener('click', () => history.back());
 
 /* ---------- Add New Hire (single) ---------- */
-let addOnePlant = null;
 function openAddOne() {
   document.getElementById('add-one-name').value = '';
-  addOnePlant = null;
-  document.querySelectorAll('#add-one-overlay .plant-pick-btn').forEach(b => b.classList.remove('selected'));
-  document.getElementById('add-one-cohort-hint').textContent = 'Will be added to ' + cohortLabel(currentCohortKey()) + '.';
+  document.getElementById('add-one-cohort-hint').textContent = 'Will be added to ' + plantLabel(currentPlant) + ' · ' + cohortLabel(currentCohortKey()) + '.';
   document.getElementById('add-one-overlay').classList.add('visible');
   document.getElementById('add-one-name').focus();
 }
 document.getElementById('btn-add-one').addEventListener('click', openAddOne);
 document.getElementById('add-one-cancel').addEventListener('click', () => document.getElementById('add-one-overlay').classList.remove('visible'));
-document.querySelectorAll('#add-one-overlay .plant-pick-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    addOnePlant = btn.dataset.plant;
-    document.querySelectorAll('#add-one-overlay .plant-pick-btn').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-  });
-});
 document.getElementById('add-one-save').addEventListener('click', () => {
   const name = document.getElementById('add-one-name').value.trim();
   if (!name) { showToast('Enter a name', 'warn'); return; }
-  if (!addOnePlant) { showToast('Select a plant', 'warn'); return; }
   Store.addNewHire({
-    id: uid(), name, plant: addOnePlant, cohortKey: currentCohortKey(),
+    id: uid(), name, plant: currentPlant, cohortKey: currentCohortKey(),
     dateAdded: new Date().toISOString(), status: 'not_started',
   });
   document.getElementById('add-one-overlay').classList.remove('visible');
@@ -1047,32 +1129,21 @@ document.getElementById('add-one-save').addEventListener('click', () => {
 });
 
 /* ---------- Add New Hires (bulk paste) ---------- */
-let addBulkPlant = null;
 function openAddBulk() {
   document.getElementById('add-bulk-text').value = '';
-  addBulkPlant = null;
-  document.querySelectorAll('#add-bulk-overlay .plant-pick-btn').forEach(b => b.classList.remove('selected'));
-  document.getElementById('add-bulk-cohort-hint').textContent = 'Will be added to ' + cohortLabel(currentCohortKey()) + '.';
+  document.getElementById('add-bulk-cohort-hint').textContent = 'Will be added to ' + plantLabel(currentPlant) + ' · ' + cohortLabel(currentCohortKey()) + '.';
   document.getElementById('add-bulk-overlay').classList.add('visible');
   document.getElementById('add-bulk-text').focus();
 }
 document.getElementById('btn-add-bulk').addEventListener('click', openAddBulk);
 document.getElementById('add-bulk-cancel').addEventListener('click', () => document.getElementById('add-bulk-overlay').classList.remove('visible'));
-document.querySelectorAll('#add-bulk-overlay .plant-pick-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    addBulkPlant = btn.dataset.plant;
-    document.querySelectorAll('#add-bulk-overlay .plant-pick-btn').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-  });
-});
 document.getElementById('add-bulk-save').addEventListener('click', () => {
   const names = document.getElementById('add-bulk-text').value.split('\n').map(s => s.trim()).filter(Boolean);
   if (names.length === 0) { showToast('Paste at least one name', 'warn'); return; }
-  if (!addBulkPlant) { showToast('Select a plant', 'warn'); return; }
   const cohortKey = currentCohortKey();
   names.forEach(name => {
     Store.addNewHire({
-      id: uid(), name, plant: addBulkPlant, cohortKey,
+      id: uid(), name, plant: currentPlant, cohortKey,
       dateAdded: new Date().toISOString(), status: 'not_started',
     });
   });
@@ -1093,8 +1164,7 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 }
 
-history.replaceState({ screen: 'screen-dashboard' }, '', location.pathname);
-renderDashboard();
+bootApp();
 </script>
 </body>
 </html>
